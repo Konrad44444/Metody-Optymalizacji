@@ -57,7 +57,59 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 	
 	try {
 		solution Xopt;
-		//Tu wpisz kod funkcji
+		
+		solution A = solution(a);
+		solution B = solution(b);
+		solution C = solution(((b - a) / 2));
+		solution D = solution(0);
+		solution prevD = solution(D.x);
+
+		while ((B.x - A.x < epsilon) || (D - prevD) < gamma) {
+			double licznik = A.fit_fun(ff) * (B.x * b.x - C.x * C.x) + B.fit_fun(ff) * (C.x * C.x - A.x * A.x) + C.fit_fun(ff) * (A.x * A.x - B.x * B.x);
+			double mianownik = A.fit_fun(ff) * (B.x - C.x) + B.fit_fun(ff) * (C.x - A.x) + C.fit_fun(ff) * (A.x - B.x);
+
+			if (mianownik <= 0) throw("Dzielenie przez 0!");
+
+			prevD.x = D.x;
+			D.x = 0, 5 * licznik / mianownik;
+
+			if ((A.x < D) && (D < C.x)) {
+				
+				if (D.fit_fun(ff) < C.fit_fun(ff)) {
+					// A.x = A.x;
+					C.x = D;
+					B.x = C.x;
+				} else {
+					A.x = D;
+					// C.x = C.x;
+					// B.x = B.x;
+				}
+
+			} else {
+
+				if ((C.x < D.x) && (D.x < B.x)) {
+
+					if (D.fit_fun(ff) < C.fit_fun()) {
+						A.x = C.x;
+						C.x = D.x;
+						//B.x = B.x;
+					} else {
+						//A.x = A.x;
+						//C.x = C.x;
+						B.x = D.x;
+					}
+
+				} else {
+					throw("Error in if condition!");
+				}
+
+			}
+			
+			if (solution::f_calls > Nmax) throw("f_calls > Nmax");
+
+		}
+
+		Xopt = solution(D.x);
 
 		return Xopt;
 	
