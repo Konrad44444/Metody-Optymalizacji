@@ -1,4 +1,6 @@
+#define _USE_MATH_DEFINES
 #include"user_funs.h"
+#include<math.h>
 
 matrix ff0T(matrix x, matrix ud1, matrix ud2)
 {
