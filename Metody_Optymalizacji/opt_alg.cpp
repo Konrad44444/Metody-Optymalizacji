@@ -30,24 +30,108 @@ double* expansion(matrix(*ff)(matrix, matrix, matrix), double x0, double d, doub
 
 	try {
 		double* p = new double[2]{ 0,0 };
-		//Tu wpisz kod funkcji
 
-		return p;
+		solution::clear_calls();
+		
+		solution X0(x0);
+		solution X1(x0 + d);
+
+		X0.fit_fun(ff, ud1, ud2);
+		X1.fit_fun(ff, ud1, ud2);
+
+		if (X0.y(0) == X1.y(0))
+		{
+			return p = new double[2]{ X0.x(0), X1.x(0) };
+		}
+
+		if (X1.y(0) > X0.y(0)) {
+		
+			d *= -1;
+			X1.x(0) = X0.x(0) + d;
+			X1.fit_fun(ff, ud1, ud2);
+			if (X1.y(0) >= X0.y(0))
+			{
+				return p = new double[2]{ X1.x(0), X0.x(0)-d };
+			}
+		}
+
+		solution X2;	
+
+		int i = 1;
+		while(true) {
+
+			X2.x(0) = x0 + pow(alpha, i) * d;
+			X2.fit_fun(ff, ud1, ud2);
+			X1.fit_fun(ff, ud1, ud2);
+
+			if (solution::f_calls > Nmax || X1.y(0) <= X2.y(0))
+				break;
+
+			X0.x = X1.x;
+			X1.x = X2.x;
+			i++;
+
+		}
+
+		if(d > 0)
+			return p = new double[2]{ X0.x(0), X2.x(0)};
+
+		return p = new double[2]{ X2.x(0), X0.x(0) };
 
 	} catch (string ex_info) {
 		throw ("double* expansion(...):\n" + ex_info);
 	}
 }
 
+int fib_seq(int n) {
+	return (1 / sqrt(5)) * (pow(((1 + sqrt(5)) / (2)), n) - pow(((1 - sqrt(5)) / (2)), n));
+}
+
 solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double epsilon, matrix ud1, matrix ud2) {
 	
 	try {
-		solution Xopt;
-		//Tu wpisz kod funkcji
+		int k = 0;
+		int fi = 0;
 
-		return Xopt;
-	
-	} catch (string ex_info) {
+		while (true) {
+			fi = fib_seq(k);
+			if (fi > (b - a) / epsilon) {
+				break;
+			}
+			else {
+				k++;
+			}
+		}
+		k -= 1;
+
+		solution A(a);
+		solution B(b);
+		solution C(B.x(0) - ((double)fib_seq(k - 1) / (double)fib_seq(k) * (B.x(0) - A.x(0))));
+		solution D(A.x(0) + B.x(0) - C.x(0));
+
+		int i = 0;
+		while (i <= k - 3) {
+
+			C.fit_fun(ff);
+			D.fit_fun(ff);
+
+			if (C.y(0) < D.y(0)) {
+				B.x = D.x(0);
+			}
+			else {
+				A.x = C.x(0);
+			}
+
+			C.x(0) = B.x(0) - ((double)fib_seq(k - i - 2) / (double)fib_seq(k - i - 1)) * (B.x(0) - A.x(0));
+			D.x(0) = A.x(0) + B.x(0) - C.x(0);
+
+			i++;
+		}
+
+		return C;
+
+	}
+	catch (string ex_info) {
 		throw ("solution fib(...):\n" + ex_info);
 	}
 
@@ -56,64 +140,71 @@ solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double epsilon, double gamma, int Nmax, matrix ud1, matrix ud2) {
 	
 	try {
-		solution Xopt;
-		
-		solution A = solution(a);
-		solution B = solution(b);
-		solution C = solution(((b - a) / 2));
-		solution D = solution(0);
-		solution prevD = solution(D.x);
+		solution A(a);
+		solution B(b);
+		solution C(((a + b) / 2));
+		solution D(0);
+		solution prevD(D.x(0));
 
-		while ((B.x - A.x < epsilon) || (D - prevD) < gamma) {
-			double licznik = A.fit_fun(ff) * (B.x * b.x - C.x * C.x) + B.fit_fun(ff) * (C.x * C.x - A.x * A.x) + C.fit_fun(ff) * (A.x * A.x - B.x * B.x);
-			double mianownik = A.fit_fun(ff) * (B.x - C.x) + B.fit_fun(ff) * (C.x - A.x) + C.fit_fun(ff) * (A.x - B.x);
+		A.fit_fun(ff);
+		B.fit_fun(ff);
+		C.fit_fun(ff);
 
-			if (mianownik <= 0) throw("Dzielenie przez 0!");
+		while (true) {
+			double licznik = A.y(0) * (B.x(0) * B.x(0) - C.x(0) * C.x(0)) + B.y(0) * (C.x(0) * C.x(0) - A.x(0) * A.x(0)) + C.y(0) * (A.x(0) * A.x(0) - B.x(0) * B.x(0));
+			double mianownik = A.y(0) * (B.x(0) - C.x(0)) + B.y(0) * (C.x(0) - A.x(0)) + C.y(0) * (A.x(0) - B.x(0));
+
+			if (mianownik <= 0) break;
 
 			prevD.x = D.x;
-			D.x = 0, 5 * licznik / mianownik;
+			D.x = 0.5 * (licznik / mianownik);
+			D.fit_fun(ff);
 
-			if ((A.x < D) && (D < C.x)) {
-				
-				if (D.fit_fun(ff) < C.fit_fun(ff)) {
-					// A.x = A.x;
-					C.x = D;
+			if ((A.x < D.x) && (D.x < C.x)) {
+
+				if (D.y(0) < C.y(0)) {
+					C.x = D.x;
 					B.x = C.x;
-				} else {
-					A.x = D;
-					// C.x = C.x;
-					// B.x = B.x;
+					B.fit_fun(ff);
+					C.fit_fun(ff);
+				}
+				else {
+					A.x = D.x;
+					A.fit_fun(ff);
 				}
 
 			} else {
 
 				if ((C.x < D.x) && (D.x < B.x)) {
 
-					if (D.fit_fun(ff) < C.fit_fun()) {
+					if (D.y(0) < C.y(0)) {
 						A.x = C.x;
 						C.x = D.x;
-						//B.x = B.x;
-					} else {
-						//A.x = A.x;
-						//C.x = C.x;
+						A.fit_fun(ff);
+						C.fit_fun(ff);
+					}
+					else {
 						B.x = D.x;
+						B.fit_fun(ff);
 					}
 
-				} else {
-					throw("Error in if condition!");
+				}
+				else {
+					break;
 				}
 
 			}
-			
-			if (solution::f_calls > Nmax) throw("f_calls > Nmax");
+
+			if (solution::f_calls > Nmax) break;
+			if ((B.x(0) - A.x(0) < epsilon) || abs((D.x(0) - prevD.x(0))) < gamma) break;
 
 		}
 
-		Xopt = solution(D.x);
+		solution::clear_calls();
+		return D.x(0);
 
-		return Xopt;
-	
-	} catch (string ex_info) {
+	}
+	catch (string ex_info) {
 		throw ("solution lag(...):\n" + ex_info);
 	}
 }

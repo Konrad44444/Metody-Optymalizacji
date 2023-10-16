@@ -67,6 +67,15 @@ void lab0() {
 
 void lab1() {
 
+	double* p = expansion(f1, 50, 1, 1.5, 10000);
+	cout << p[0] << " " << p[1] << "\n";
+
+	solution min = fib(f1, p[0], p[1], 0.01);
+	cout << min.x(0) << "\n";
+
+	min = lag(f1, p[0], p[1], 0.01, 0.01, 10000);
+	cout << min.x(0) << "\n";
+
 }
 
 void lab2() {
