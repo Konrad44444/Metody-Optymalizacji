@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/lab1_alg.txt
+/Metody_Optymalizacji/symulacja_lab0.csv
