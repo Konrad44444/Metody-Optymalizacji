@@ -8,7 +8,11 @@ Akademia Górniczo-Hutnicza
 Data ostatniej modyfikacji: 19.09.2023
 *********************************************/
 
+#include <time.h>
 #include"opt_alg.h"
+#include <fstream>
+#include <iomanip>
+#include <random>
 
 void lab0();
 void lab1();
@@ -67,15 +71,64 @@ void lab0() {
 
 void lab1() {
 
-	double* p = expansion(f1, 50, 1, 1.5, 10000);
-	cout << p[0] << " " << p[1] << "\n";
+	//Generowanie liczb losowych
+	double dolna_granica_pkt = -100;
+	double gorna_granica_pkt = 100;
+	std::uniform_real_distribution<double> unif(dolna_granica_pkt, gorna_granica_pkt);
+	std::default_random_engine re;
 
-	solution min = fib(f1, p[0], p[1], 0.01);
-	cout << min.x(0) << "\n";
+	//Zapisywanie do pliku
+	fstream file;
+	file << std::fixed << setprecision(7);
 
-	min = lag(f1, p[0], p[1], 0.01, 0.01, 10000);
-	cout << min.x(0) << "\n";
+	file.open("ekspansja.txt");
+	
+	if (file.good()) {
 
+		for (int j = 1; j < 4; j++) {
+
+			//Wspolczynnik ekspansji
+			double wsp = j;
+
+			//Optymalizacja 1
+			for (int i = 0; i < 100; i++) {
+				//Losowy punkt
+				double pkt = unif(re);
+
+				//Eskpansja
+				double* p = expansion(f1, pkt, 1, wsp, 10000);
+
+				file << pkt << ";" << p[0] << ";" << p[1] << ";" << solution::f_calls << ";";
+
+				//Fib
+				solution min_fib = fib(f1, p[0], p[1], 0.01);
+
+				file << min_fib.x(0) << ";" << m2d(f1(min_fib.x(0))) << ";" << solution::f_calls << ";" << "NULL" << ";";
+
+				//Lag
+				solution min_lag = lag(f1, p[0], p[1], 0.01, 0.01, 10000);
+
+				file << min_lag.x(0) << ";" << m2d(f1(min_lag.x(0))) << ";" << solution::f_calls << ";" << "NULL\n";
+			}
+
+		}
+
+	}
+
+	//Bez ekspansji
+
+	file.close();
+	file.open("bezekspansji.txt");
+
+	//Fib
+	solution min_fib = fib(f1, dolna_granica_pkt, gorna_granica_pkt, 0.01);
+	file << min_fib.x(0) << ";" << m2d(f1(min_fib.x(0))) << ";" << solution::f_calls << ";" << "NULL" << ";";
+
+	//Lag
+	solution min_lag = lag(f1, dolna_granica_pkt, gorna_granica_pkt, 0.01, 0.0001, 10000);
+	file << min_lag.x(0) << ";" << m2d(f1(min_lag.x(0))) << ";" << solution::f_calls << ";" << "NULL\n";
+
+	file.close();
 }
 
 void lab2() {

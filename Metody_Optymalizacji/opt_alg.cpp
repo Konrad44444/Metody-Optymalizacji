@@ -89,6 +89,8 @@ int fib_seq(int n) {
 
 solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double epsilon, matrix ud1, matrix ud2) {
 	
+	solution::clear_calls();
+
 	try {
 		int k = 0;
 		int fi = 0;
@@ -139,6 +141,8 @@ solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 
 solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double epsilon, double gamma, int Nmax, matrix ud1, matrix ud2) {
 	
+	solution::clear_calls();
+
 	try {
 		solution A(a);
 		solution B(b);
@@ -157,7 +161,7 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 			if (mianownik <= 0) break;
 
 			prevD.x = D.x;
-			D.x = 0.5 * (licznik / mianownik);
+			D.x(0) = 0.5 * (licznik / mianownik);
 			D.fit_fun(ff);
 
 			if ((A.x < D.x) && (D.x < C.x)) {
@@ -200,7 +204,6 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 
 		}
 
-		solution::clear_calls();
 		return D.x(0);
 
 	}
