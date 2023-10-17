@@ -40,7 +40,7 @@ matrix f1(matrix x, matrix ud1, matrix ud2)
 	return -cos(0.1 * m2d(x)) * exp(-pow((0.1 * m2d(x) - 2 * M_PI), 2)) + 0.002 * pow((0.1 * m2d(x)), 2);
 }
 
-matrix df1(double t, matrix ud1, matrix ud2) {
+matrix df1(double t, matrix ud1, matrix ud2, matrix ud3 = NULL) {
 	double A = 0.98, B = 0.63, Pa = 0.7, Pb = 1.0, Va = 5.0, Vb = 1.0, Ta = 90, Tb = 10, Db = 0.003665, G = 9.81, Fin = 10.0, Tin = 10.0;
 
 	matrix dY = matrix(3, 1);
@@ -53,4 +53,19 @@ matrix df1(double t, matrix ud1, matrix ud2) {
 	dY(2) = Fin / dY(1) * (Tin - dY(2)) + FaOUT / dY(1) * (Ta - dY(2));
 
 	return dY;
+}
+
+matrix ff1R(matrix x, matrix ud1, matrix ud2)
+{
+	matrix y;
+	matrix Y0 = matrix(3, new double[3]{ 5, 1, 10 });
+	matrix* Y = solve_ode(df1, 0, 1, 1000, Y0, ud1, x);
+	int n = get_len(Y[0]);
+	double max = Y[1](0, 2);
+	for (int i = n; i < n; i++) {
+		if (max < Y[1](i, 2))
+			max = Y[1](i, 2);
+	}
+	y = abs(max - 50);
+	return y;
 }
