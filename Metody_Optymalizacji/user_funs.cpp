@@ -39,3 +39,18 @@ matrix f1(matrix x, matrix ud1, matrix ud2)
 {
 	return -cos(0.1 * m2d(x)) * exp(-pow((0.1 * m2d(x) - 2 * M_PI), 2)) + 0.002 * pow((0.1 * m2d(x)), 2);
 }
+
+matrix ff1R(matrix x, matrix ud1, matrix ud2)
+{
+	matrix y;
+	matrix Y0 = matrix(3, new double [3] {5, 1, 10});
+	matrix* Y = solve_ode(df1, 0, 1, 1000, Y0, ud1, x);
+	int n = get_len(Y[0]);
+	double max = Y[1](0, 2);
+	for (int i = n; i < n; i++) {
+		if (max < Y[1](i, 2))
+			max = Y[1](i, 2);
+	}
+	y = abs(max - 50);
+	return y;
+}
