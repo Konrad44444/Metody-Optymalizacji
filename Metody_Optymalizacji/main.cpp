@@ -79,54 +79,64 @@ void lab1() {
 
 	//Zapisywanie do pliku
 	fstream file;
-	file << std::fixed << setprecision(7);
+	//file << std::fixed << setprecision(7);
 
-	file.open("ekspansja.txt");
-	
-	if (file.good()) {
+	//file.open("ekspansja.txt");
+	//
+	//if (file.good()) {
 
-		for (int j = 1; j < 4; j++) {
+	//	for (int j = 1; j < 4; j++) {
 
-			//Wspolczynnik ekspansji
-			double wsp = j;
+	//		//Wspolczynnik ekspansji
+	//		double wsp = j;
 
-			//Optymalizacja 1
-			for (int i = 0; i < 100; i++) {
-				//Losowy punkt
-				double pkt = unif(re);
+	//		//Optymalizacja 1
+	//		for (int i = 0; i < 100; i++) {
+	//			//Losowy punkt
+	//			double pkt = unif(re);
 
-				//Eskpansja
-				double* p = expansion(f1, pkt, 1, wsp, 10000);
+	//			//Eskpansja
+	//			double* p = expansion(f1, pkt, 1, wsp, 10000);
 
-				file << pkt << ";" << p[0] << ";" << p[1] << ";" << solution::f_calls << ";";
+	//			file << pkt << ";" << p[0] << ";" << p[1] << ";" << solution::f_calls << ";";
 
-				//Fib
-				solution min_fib = fib(f1, p[0], p[1], 0.01);
+	//			//Fib
+	//			solution min_fib = fib(f1, p[0], p[1], 0.01);
 
-				file << min_fib.x(0) << ";" << m2d(f1(min_fib.x(0))) << ";" << solution::f_calls << ";" << "NULL" << ";";
+	//			file << min_fib.x(0) << ";" << m2d(f1(min_fib.x(0))) << ";" << solution::f_calls << ";" << "NULL" << ";";
 
-				//Lag
-				solution min_lag = lag(f1, p[0], p[1], 0.01, 0.01, 10000);
+	//			//Lag
+	//			solution min_lag = lag(f1, p[0], p[1], 0.01, 0.01, 10000);
 
-				file << min_lag.x(0) << ";" << m2d(f1(min_lag.x(0))) << ";" << solution::f_calls << ";" << "NULL\n";
-			}
+	//			file << min_lag.x(0) << ";" << m2d(f1(min_lag.x(0))) << ";" << solution::f_calls << ";" << "NULL\n";
+	//		}
 
-		}
+	//	}
 
-	}
+	//}
 
-	//Bez ekspansji
+	////Bez ekspansji
 
-	file.close();
-	file.open("bezekspansji.txt");
+	//file.close();
+	//file.open("bezekspansji.txt");
 
-	//Fib
-	solution min_fib = fib(f1, dolna_granica_pkt, gorna_granica_pkt, 0.01);
-	file << min_fib.x(0) << ";" << m2d(f1(min_fib.x(0))) << ";" << solution::f_calls << ";" << "NULL" << ";";
+	////Fib
+	//solution min_fib = fib(f1, dolna_granica_pkt, gorna_granica_pkt, 0.01);
+	//file << min_fib.x(0) << ";" << m2d(f1(min_fib.x(0))) << ";" << solution::f_calls << ";" << "NULL" << ";";
 
-	//Lag
-	solution min_lag = lag(f1, dolna_granica_pkt, gorna_granica_pkt, 0.01, 0.0001, 10000);
-	file << min_lag.x(0) << ";" << m2d(f1(min_lag.x(0))) << ";" << solution::f_calls << ";" << "NULL\n";
+	////Lag
+	//solution min_lag = lag(f1, dolna_granica_pkt, gorna_granica_pkt, 0.01, 0.0001, 10000);
+	//file << min_lag.x(0) << ";" << m2d(f1(min_lag.x(0))) << ";" << solution::f_calls << ";" << "NULL\n";
+
+	// przedzial w zadaniu 1 - 100 cm^2 -> 0,0001 - 0,01 m^2, nw jaki ma byæ krok bo zawsze koniec przedzia³u to pocz¹tek + krok
+	// zmiana tych podanych w instrukcji parametrów w df1 nie wp³ywa w ogóle na wynik
+	double* p = expansion(ff1R, 0.0001, 1, 2.2, 10000);
+	cout << "Przedzial: " << p[0] << " - " << p[1] << endl;
+	solution min_fib = fib(ff1R, p[0], p[1], 0.1);
+	solution min_lag = lag(ff1R, p[0], p[1], 0.1, 0.1, 10000); // zwraca max double bo mianownik wychodzi 0
+
+	cout << "Wynik z metody Fibbonacciego: " << min_fib.x(0) << endl;
+	cout << "Wynik z metody Lagrange'a: " << min_lag.x(0) << endl;
 
 	file.close();
 }

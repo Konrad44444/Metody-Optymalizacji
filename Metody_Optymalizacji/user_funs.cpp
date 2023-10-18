@@ -42,7 +42,7 @@ matrix f1(matrix x, matrix ud1, matrix ud2)
 
 
 matrix df1(double t, matrix ud1, matrix ud2, matrix ud3 = NULL) {
-	double A = 0.98, B = 0.63, Pa = 0.7, Pb = 1.0, Va = 5.0, Vb = 1.0, Ta = 90, Tb = 10, Db = 0.003665, G = 9.81, Fin = 10.0, Tin = 10.0;
+	double A = 0.98, B = 0.63, Pa = 0.7, Pb = 1.0, Va = 5.0, Vb = 1.0, Ta = 90, Tb = 10, Db = 0.003665, G = 9.81, Fin = 0.01, Tin = 10.0;
 
 	matrix dY = matrix(3, 1);
 
@@ -51,7 +51,7 @@ matrix df1(double t, matrix ud1, matrix ud2, matrix ud3 = NULL) {
 
 	dY(0) = -1 * FaOUT;
 	dY(1) = FaOUT + Fin - FbOUT;
-	dY(2) = Fin / dY(1) * (Tin - dY(2)) + FaOUT / dY(1) * (Ta - dY(2));
+	dY(2) = (Fin / dY(1)) * (Tin - dY(2)) + (FaOUT / dY(1)) * (Ta - dY(2));
 
 	return dY;
 }

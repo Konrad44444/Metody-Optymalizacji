@@ -147,8 +147,8 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 		solution A(a);
 		solution B(b);
 		solution C(((a + b) / 2));
-		solution D(0);
-		solution prevD(D.x(0));
+		solution D(DBL_MAX);
+		solution prevD(0.0);
 
 		A.fit_fun(ff);
 		B.fit_fun(ff);
@@ -157,6 +157,8 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 		while (true) {
 			double licznik = A.y(0) * (B.x(0) * B.x(0) - C.x(0) * C.x(0)) + B.y(0) * (C.x(0) * C.x(0) - A.x(0) * A.x(0)) + C.y(0) * (A.x(0) * A.x(0) - B.x(0) * B.x(0));
 			double mianownik = A.y(0) * (B.x(0) - C.x(0)) + B.y(0) * (C.x(0) - A.x(0)) + C.y(0) * (A.x(0) - B.x(0));
+
+			//cout << "Metoda Lagrange'a - mianownik: " << mianownik << endl;
 
 			if (mianownik <= 0) break;
 
