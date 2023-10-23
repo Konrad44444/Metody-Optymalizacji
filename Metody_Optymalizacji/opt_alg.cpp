@@ -104,7 +104,6 @@ solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 				k++;
 			}
 		}
-		k -= 1;
 
 		solution A(a);
 		solution B(b);
@@ -114,8 +113,8 @@ solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 		int i = 0;
 		while (i <= k - 3) {
 
-			C.fit_fun(ff);
-			D.fit_fun(ff);
+			C.fit_fun(ff, ud1, ud2);
+			D.fit_fun(ff, ud1, ud2);
 
 			if (C.y(0) < D.y(0)) {
 				B.x = D.x(0);
@@ -148,50 +147,50 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 		solution B(b);
 		solution C(((a + b) / 2));
 		solution D(DBL_MAX);
-		solution prevD(0.0);
+		solution prevD(a);
 
-		A.fit_fun(ff);
-		B.fit_fun(ff);
-		C.fit_fun(ff);
+		A.fit_fun(ff, ud1, ud2);
+		B.fit_fun(ff, ud1, ud2);
+		C.fit_fun(ff, ud1, ud2);
 
 		while (true) {
 			double licznik = A.y(0) * (B.x(0) * B.x(0) - C.x(0) * C.x(0)) + B.y(0) * (C.x(0) * C.x(0) - A.x(0) * A.x(0)) + C.y(0) * (A.x(0) * A.x(0) - B.x(0) * B.x(0));
 			double mianownik = A.y(0) * (B.x(0) - C.x(0)) + B.y(0) * (C.x(0) - A.x(0)) + C.y(0) * (A.x(0) - B.x(0));
 
-			//cout << "Metoda Lagrange'a - mianownik: " << mianownik << endl;
+			cout << "Metoda Lagrange'a - mianownik: " << mianownik << endl;
 
-			if (mianownik <= 0) break;
+			if (mianownik <= 0) return prevD;
 
-			prevD.x = D.x;
+			prevD.x(0) = D.x(0);
 			D.x(0) = 0.5 * (licznik / mianownik);
-			D.fit_fun(ff);
+			D.fit_fun(ff, ud1, ud2);
 
-			if ((A.x < D.x) && (D.x < C.x)) {
+			if ((A.x(0) < D.x(0)) && (D.x(0) < C.x(0))) {
 
 				if (D.y(0) < C.y(0)) {
-					C.x = D.x;
-					B.x = C.x;
-					B.fit_fun(ff);
-					C.fit_fun(ff);
+					C.x(0) = D.x(0);
+					B.x(0) = C.x(0);
+					B.fit_fun(ff, ud1, ud2);
+					C.fit_fun(ff, ud1, ud2);
 				}
 				else {
-					A.x = D.x;
-					A.fit_fun(ff);
+					A.x(0) = D.x(0);
+					A.fit_fun(ff, ud1, ud2);
 				}
 
 			} else {
 
-				if ((C.x < D.x) && (D.x < B.x)) {
+				if ((C.x(0) < D.x(0)) && (D.x(0) < B.x(0))) {
 
 					if (D.y(0) < C.y(0)) {
-						A.x = C.x;
-						C.x = D.x;
-						A.fit_fun(ff);
-						C.fit_fun(ff);
+						A.x(0) = C.x(0);
+						C.x(0) = D.x(0);
+						A.fit_fun(ff, ud1, ud2);
+						C.fit_fun(ff, ud1, ud2);
 					}
 					else {
-						B.x = D.x;
-						B.fit_fun(ff);
+						B.x(0) = D.x(0);
+						B.fit_fun(ff, ud1, ud2);
 					}
 
 				}

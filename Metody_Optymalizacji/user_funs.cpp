@@ -41,17 +41,17 @@ matrix f1(matrix x, matrix ud1, matrix ud2)
 }
 
 
-matrix df1(double t, matrix ud1, matrix ud2, matrix ud3 = NULL) {
-	double A = 0.98, B = 0.63, Pa = 0.7, Pb = 1.0, Va = 5.0, Vb = 1.0, Ta = 90, Tb = 10, Db = 0.003665, G = 9.81, Fin = 0.01, Tin = 10.0;
+matrix df1(double t, matrix ud1, matrix ud2, matrix ud3) {
+	double A = 0.98, B = 0.63, Pa = 0.7, Pb = 1.0, Va = 5.0, Vb = 1.0, Ta = 90, Tb = 10, Db = 36.5665e-4, G = 9.81, Fin = 0.01, Tin = 10.0;
 
 	matrix dY = matrix(3, 1);
-
-	double FaOUT = dY(0) > 0 ? A * B * m2d(ud2) * sqrt(2 * G * (dY(0) / Pa)) : 0;
-	double FbOUT = dY(1) > 0 ? A * B * Db * sqrt(2 * G * (dY(1) / Pb)) : 0;
+	
+	double FaOUT = ud1(0) > 0 ? A * B * m2d(ud2) * sqrt(2 * G * (ud1(0) / Pa)) : 0;
+	double FbOUT = ud1(1) > 0 ? A * B * Db * sqrt(2 * G * (ud1(1) / Pb)) : 0;
 
 	dY(0) = -1 * FaOUT;
 	dY(1) = FaOUT + Fin - FbOUT;
-	dY(2) = (Fin / dY(1)) * (Tin - dY(2)) + (FaOUT / dY(1)) * (Ta - dY(2));
+	dY(2) = Fin / ud1(1) * (Tin - ud1(2)) + FaOUT / ud1(1) * (Ta - ud1(2));
 
 	return dY;
 }
@@ -63,11 +63,11 @@ matrix ff1R(matrix x, matrix ud1, matrix ud2)
 	matrix* Y = solve_ode(df1, 0, 1, 1000, Y0, ud1, x);
 	int n = get_len(Y[0]);
 	double max = Y[1](0, 2);
-	for (int i = n; i < n; i++) {
-		if (max < Y[1](i, 2))
-			max = Y[1](i, 2);
+	for (int i = 1; i < n; i++) {
+		if (max < Y[1][2](i))
+			max = Y[1][2](i);
 	}
-	y = abs(max - 50);
+	y(0) = abs(max - 50);
 	return y;
 
 }

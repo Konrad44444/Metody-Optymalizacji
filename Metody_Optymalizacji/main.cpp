@@ -130,13 +130,28 @@ void lab1() {
 
 	// przedzial w zadaniu 1 - 100 cm^2 -> 0,0001 - 0,01 m^2, nw jaki ma byæ krok bo zawsze koniec przedzia³u to pocz¹tek + krok
 	// zmiana tych podanych w instrukcji parametrów w df1 nie wp³ywa w ogóle na wynik
-	double* p = expansion(ff1R, 0.0001, 1, 2.2, 10000);
-	cout << "Przedzial: " << p[0] << " - " << p[1] << endl;
-	solution min_fib = fib(ff1R, p[0], p[1], 0.1);
-	solution min_lag = lag(ff1R, p[0], p[1], 0.1, 0.1, 10000); // zwraca max double bo mianownik wychodzi 0
 
-	cout << "Wynik z metody Fibbonacciego: " << min_fib.x(0) << endl;
-	cout << "Wynik z metody Lagrange'a: " << min_lag.x(0) << endl;
+	random_device R;
+	double d = 1e-3, alpha = 2, epsilon = 10e-7, gamma = 10e-200;
+	int Nmax = 1000;
+
+	double Da = 100.0 * R() / R.max();
+	cout << "Da: " << Da << endl;
+	Da = Da * pow(10, -4);
+
+
+	double* p = expansion(ff1R, Da, d, alpha, Nmax);
+
+	cout << "Przedzial: " << p[0] << " - " << p[1] << endl;
+
+	solution min_fib = fib(ff1R, p[0], p[1], epsilon);
+	solution min_lag = lag(ff1R, p[0], p[1], epsilon, gamma, Nmax);
+
+	min_fib.fit_fun(ff1R);
+	min_lag.fit_fun(ff1R);
+
+	cout << "Wynik z metody Fibbonacciego " << min_fib << endl;
+	cout << "Wynik z metody Lagrange'a: " << min_lag << endl;
 
 	file.close();
 }
