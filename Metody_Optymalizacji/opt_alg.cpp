@@ -217,8 +217,43 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 	
 	try {
 		solution Xopt;
-		//Tu wpisz kod funkcji
+		solution::clear_calls();
+		do {
 
+			solution XB(x0);
+			solution X = HJ_trial(ff, XB, s);
+			XB.fit_fun(ff);
+			X.fit_fun(ff);
+
+			if (X.y(0) < XB.y(0)) {
+
+				do {
+					solution _XB(XB.x(0));
+					XB.x(0) = X.x(0);
+					X.x(0) = 2 * XB.x(0) - _XB.x(0);
+					X = HJ_trial(ff, XB, s);
+					
+					if (solution::f_calls > Nmax) break;
+
+					X.fit_fun(ff);
+					XB.fit_fun(ff);
+				} while (X.y(0) >= XB.y(0))
+
+				X.x(0) = XB.x(0);
+
+			}
+			else {
+
+				s = alpha * s;
+
+			}
+
+			if (solution::f_calls > Nmax) break;
+
+		} while (s < epsilon)
+
+		XB.fit_fun(ff);
+		Xopt = XB;
 		return Xopt;
 	
 	} catch (string ex_info) {

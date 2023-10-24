@@ -74,3 +74,8 @@ matrix ff1R(matrix x, matrix ud1, matrix ud2)
 
 }
 
+matrix f2(matrix x1, matrix x2, matrix ud1)
+{
+	return pow(m2d(x1), 2) + pow(m2d(x2), 2) - cos(2.5 * M_PI * m2d(x1)) - cos(2.5 * M_PI * m2d(x2)) + 2;
+}
+
