@@ -44,11 +44,13 @@ matrix f1(matrix x, matrix ud1, matrix ud2)
 matrix df1(double t, matrix ud1, matrix ud2, matrix ud3) {
 	double A = 0.98, B = 0.63, Pa = 0.7, Pb = 1.0, Va = 5.0, Vb = 1.0, Ta = 90, Tb = 10, Db = 36.5665e-4, G = 9.81, Fin = 0.01, Tin = 10.0;
 
-	matrix dY = matrix(3, 1);
 	
-	double FaOUT = ud1(0) > 0 ? A * B * m2d(ud3) * sqrt(2 * G * (ud1(0) / Pa)) : 0;
-	double FbOUT = ud1(1) > 0 ? A * B * Db * sqrt(2 * G * (ud1(1) / Pb)) : 0;
+	double FaOUT;
+	double FbOUT;
+	FaOUT= A * B * m2d(ud3) * sqrt(2 * G * (ud1(0) / Pa)) ;
+	FbOUT=  A * B * Db * sqrt(2 * G * (ud1(1) / Pb));
 
+	matrix dY = matrix(3, 1);
 	dY(0) = -1 * FaOUT;
 	dY(1) = FaOUT + Fin - FbOUT;
 	dY(2) = Fin / ud1(1) * (Tin - ud1(2)) + FaOUT / ud1(1) * (Ta - ud1(2));
