@@ -27,7 +27,7 @@ int main() {
 	// algorytmy s¹ w opt_alg.cpp
 	
 	try {
-		lab2();
+		lab1();
 	} catch (string EX_INFO) {
 		cerr << "ERROR:\n";
 		cerr << EX_INFO << endl << endl;
@@ -132,7 +132,7 @@ void lab1() {
 	// zmiana tych podanych w instrukcji parametrów w df1 nie wp³ywa w ogóle na wynik
 
 	random_device R;
-	double d = 1, alpha = 2, epsilon = 1e-4, gamma = 1e-4;
+	double d = 1, alpha = 2, epsilon = 1e-10, gamma = 1e-20;
 	int Nmax = 1000;
 
 	double Da = 100.0 * R() / R.max();
@@ -140,17 +140,17 @@ void lab1() {
 	Da = Da * pow(10, -4);
 
 
-	double* p = expansion(ff1R, Da, d, alpha, Nmax);
+	double* p = expansion(ff1R, 0.001, d, alpha, Nmax);
 
 	cout << "Przedzial: " << p[0] << " - " << p[1] << endl;
 
-	solution min_fib = fib(ff1R, p[0], p[1], epsilon);
+	//solution min_fib = fib(ff1R, p[0], p[1], epsilon);
 	solution min_lag = lag(ff1R, p[0], p[1], epsilon, gamma, Nmax);
 
 	//min_fib.fit_fun(ff1R);
-	//min_lag.fit_fun(ff1R);
+	min_lag.fit_fun(ff1R);
 
-	cout << "Wynik z metody Fibbonacciego " << min_fib << endl;
+	//cout << "Wynik z metody Fibbonacciego " << min_fib << endl;
 	cout << "Wynik z metody Lagrange'a: " << min_lag << endl;
 
 	file.close();

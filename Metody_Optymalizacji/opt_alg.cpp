@@ -153,13 +153,13 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 		B.fit_fun(ff, ud1, ud2);
 		C.fit_fun(ff, ud1, ud2);
 
-		while (true) {
+		do {
 			double licznik = A.y(0) * (B.x(0) * B.x(0) - C.x(0) * C.x(0)) + B.y(0) * (C.x(0) * C.x(0) - A.x(0) * A.x(0)) + C.y(0) * (A.x(0) * A.x(0) - B.x(0) * B.x(0));
 			double mianownik = A.y(0) * (B.x(0) - C.x(0)) + B.y(0) * (C.x(0) - A.x(0)) + C.y(0) * (A.x(0) - B.x(0));
 
 			cout << "Metoda Lagrange'a - mianownik: " << mianownik << endl;
 
-			if (mianownik <= 0) return prevD;
+			if (mianownik <= 0) break;
 
 			prevD.x(0) = D.x(0);
 			D.x(0) = 0.5 * (licznik / mianownik);
@@ -201,9 +201,8 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 			}
 
 			if (solution::f_calls > Nmax) break;
-			if ((B.x(0) - A.x(0) < epsilon) || abs((D.x(0) - prevD.x(0))) < gamma) break;
 
-		}
+		} while ((B.x(0) - A.x(0) >= epsilon) || abs((D.x(0) - prevD.x(0))) >= gamma);
 
 		return D.x(0);
 
@@ -217,10 +216,10 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 	
 	try {
 		solution Xopt;
+		solution XB(x0);
 		solution::clear_calls();
 		do {
 
-			solution XB(x0);
 			solution X = HJ_trial(ff, XB, s);
 			XB.fit_fun(ff);
 			X.fit_fun(ff);
@@ -237,7 +236,7 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 
 					X.fit_fun(ff);
 					XB.fit_fun(ff);
-				} while (X.y(0) >= XB.y(0))
+				} while (X.y(0) >= XB.y(0));
 
 				X.x(0) = XB.x(0);
 
@@ -250,7 +249,7 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 
 			if (solution::f_calls > Nmax) break;
 
-		} while (s < epsilon)
+		} while (s < epsilon);
 
 		XB.fit_fun(ff);
 		Xopt = XB;
@@ -264,10 +263,28 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 solution HJ_trial(matrix(*ff)(matrix, matrix, matrix), solution XB, double s, matrix ud1, matrix ud2) {
 	
 	try {
-		//Tu wpisz kod funkcji
+
+		int j = 1;
+
+		for (int j = 1; j < 2; j++) {
+
+			solution X1(XB.x(0) + s * exp(j));
+			solution X2(XB.x(0) - s * exp(j));
+			X1.fit_fun(ff);
+			X2.fit_fun(ff);
+
+			if (X1.y(0) < XB.y(0)) {
+				XB = X1;
+			}
+			else if (X2.y(0) < XB.y(0)) {
+				XB = X2;
+			}
+
+		}
 
 		return XB;
-	} catch (string ex_info) {
+	}
+	catch (string ex_info) {
 		throw ("solution HJ_trial(...):\n" + ex_info);
 	}
 }
