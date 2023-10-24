@@ -46,7 +46,7 @@ matrix df1(double t, matrix ud1, matrix ud2, matrix ud3) {
 
 	matrix dY = matrix(3, 1);
 	
-	double FaOUT = ud1(0) > 0 ? A * B * m2d(ud2) * sqrt(2 * G * (ud1(0) / Pa)) : 0;
+	double FaOUT = ud1(0) > 0 ? A * B * m2d(ud3) * sqrt(2 * G * (ud1(0) / Pa)) : 0;
 	double FbOUT = ud1(1) > 0 ? A * B * Db * sqrt(2 * G * (ud1(1) / Pb)) : 0;
 
 	dY(0) = -1 * FaOUT;

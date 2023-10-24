@@ -132,7 +132,7 @@ void lab1() {
 	// zmiana tych podanych w instrukcji parametrów w df1 nie wp³ywa w ogóle na wynik
 
 	random_device R;
-	double d = 1e-3, alpha = 2, epsilon = 10e-7, gamma = 10e-200;
+	double d = 1, alpha = 2, epsilon = 1e-4, gamma = 1e-4;
 	int Nmax = 1000;
 
 	double Da = 100.0 * R() / R.max();
@@ -147,8 +147,8 @@ void lab1() {
 	solution min_fib = fib(ff1R, p[0], p[1], epsilon);
 	solution min_lag = lag(ff1R, p[0], p[1], epsilon, gamma, Nmax);
 
-	min_fib.fit_fun(ff1R);
-	min_lag.fit_fun(ff1R);
+	//min_fib.fit_fun(ff1R);
+	//min_lag.fit_fun(ff1R);
 
 	cout << "Wynik z metody Fibbonacciego " << min_fib << endl;
 	cout << "Wynik z metody Lagrange'a: " << min_lag << endl;
