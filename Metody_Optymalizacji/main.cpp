@@ -147,8 +147,8 @@ void lab1() {
 	solution min_fib = fib(ff1R, p[0], p[1], epsilon);
 	solution min_lag = lag(ff1R, p[0], p[1], epsilon, gamma, Nmax);
 
-	min_fib.fit_fun(ff1R);
-	min_lag.fit_fun(ff1R);
+	//min_fib.fit_fun(ff1R);
+	//min_lag.fit_fun(ff1R);
 
 	cout << "Wynik z metody Fibbonacciego " << min_fib << endl;
 	cout << "Wynik z metody Lagrange'a: " << min_lag << endl;
