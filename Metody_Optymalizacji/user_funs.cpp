@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 #include"user_funs.h"
 #include<math.h>
+#include<vector>
 
 matrix ff0T(matrix x, matrix ud1, matrix ud2)
 {
@@ -40,7 +41,6 @@ matrix f1(matrix x, matrix ud1, matrix ud2)
 	return -cos(0.1 * m2d(x)) * exp(-pow((0.1 * m2d(x) - 2 * M_PI), 2)) + 0.002 * pow((0.1 * m2d(x)), 2);
 }
 
-
 matrix df1(double t, matrix ud1, matrix ud2, matrix ud3) {
 	double A = 0.98, B = 0.63, Pa = 0.7, Pb = 1.0, Va = 5.0, Vb = 1.0, Ta = 90, Tb = 10, Db = 36.5665e-4, G = 9.81, Fin = 0.01, Tin = 10.0;
 
@@ -63,6 +63,7 @@ matrix ff1R(matrix x, matrix ud1, matrix ud2)
 	matrix y;
 	matrix Y0 = matrix(3, new double[3]{ 5, 1, 10 });
 	matrix* Y = solve_ode(df1, 0, 1, 1000, Y0, ud1, x);
+
 	int n = get_len(Y[0]);
 	double max = Y[1](0, 2);
 	for (int i = 1; i < n; i++) {

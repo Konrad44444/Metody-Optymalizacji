@@ -131,29 +131,35 @@ void lab1() {
 	// przedzial w zadaniu 1 - 100 cm^2 -> 0,0001 - 0,01 m^2, nw jaki ma byæ krok bo zawsze koniec przedzia³u to pocz¹tek + krok
 	// zmiana tych podanych w instrukcji parametrów w df1 nie wp³ywa w ogóle na wynik
 
-	random_device R;
-	double d = 1, alpha = 2, epsilon = 1e-10, gamma = 1e-20;
-	int Nmax = 1000;
+	//random_device R;
+	//double d = 1, alpha = 2, epsilon = 1e-6, gamma = 1e-12;
+	//int Nmax = 1000;
+	//solution min_fib;
+	//solution min_lag;
 
-	double Da = 100.0 * R() / R.max();
-	cout << "Da: " << Da << endl;
-	Da = Da * pow(10, -4);
+	//	double* p = expansion(ff1R, 0.00192143, d, alpha, Nmax);
 
+	//	cout << "Przedzial: " << p[0] << " - " << p[1] << endl;
 
-	double* p = expansion(ff1R, 0.001, d, alpha, Nmax);
+	//	min_fib = fib(ff1R, p[0], p[1], epsilon);
+	//	//min_lag = lag(ff1R, p[0], p[1], epsilon, gamma, Nmax);
 
-	cout << "Przedzial: " << p[0] << " - " << p[1] << endl;
+	//	min_fib.fit_fun(ff1R);
+	//	//min_lag.fit_fun(ff1R);
 
-	//solution min_fib = fib(ff1R, p[0], p[1], epsilon);
-	solution min_lag = lag(ff1R, p[0], p[1], epsilon, gamma, Nmax);
+	//	cout << "Wynik z metody Fibbonacciego " << min_fib << endl;
+	//	//cout << "Wynik z metody Lagrange'a: " << min_lag << endl;
+	matrix Y0 = matrix(3, new double[3] { 5, 1, 10 });
+	matrix ud1;
+	matrix* Y = solve_ode(df1, 0, 1, 1000, Y0, ud1, 0.00201729);
 
-	//min_fib.fit_fun(ff1R);
-	min_lag.fit_fun(ff1R);
+	file.open("lag.txt");
 
-	//cout << "Wynik z metody Fibbonacciego " << min_fib << endl;
-	cout << "Wynik z metody Lagrange'a: " << min_lag << endl;
-
+	if (file.good()) {
+		file << Y[1];
+	}
 	file.close();
+
 }
 
 void lab2() {
