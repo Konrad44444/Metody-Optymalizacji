@@ -27,7 +27,7 @@ int main() {
 	// algorytmy s¹ w opt_alg.cpp
 	
 	try {
-		lab1();
+		lab2();
 	} catch (string EX_INFO) {
 		cerr << "ERROR:\n";
 		cerr << EX_INFO << endl << endl;
