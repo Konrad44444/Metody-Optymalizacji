@@ -261,20 +261,23 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 solution HJ_trial(matrix(*ff)(matrix, matrix, matrix), solution XB, double s, matrix ud1, matrix ud2) {
 	
 	try {
+		solution::clear_calls;
+		// wymiar XB, chyba
+		int* n = get_size(XB.x);
 
-		int j = 1;
+		solution X1, X2;
 
-		for (int j = 1; j < 2; j++) {
+		for (int j = 1; j < n[0]; j++) {
 
-			solution X1(XB.x(0) + s * exp(j));
-			solution X2(XB.x(0) - s * exp(j));
+			X1.x = (XB.x + s * exp(j));
+			X2.x = (XB.x - s * exp(j));
 			X1.fit_fun(ff);
 			X2.fit_fun(ff);
 
-			if (X1.y(0) < XB.y(0)) {
+			if (X1.y < XB.y) {
 				XB = X1;
 			}
-			else if (X2.y(0) < XB.y(0)) {
+			else if (X2.y < XB.y) {
 				XB = X2;
 			}
 
@@ -290,8 +293,89 @@ solution HJ_trial(matrix(*ff)(matrix, matrix, matrix), solution XB, double s, ma
 solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double alpha, double beta, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	
 	try {
+
+		solution::clear_calls;
+
 		solution Xopt;
 		//Tu wpisz kod funkcji
+
+		int* n = get_size(x0);
+		matrix l(n[0], 1), p(n[0], 1), s(s0); // l -> lambda
+		matrix D(n[0], n[0]); // macierz kierunku
+		for (int i = 0; i < n[0]; i++) {
+			D(i, i) = 1;
+		}
+
+		solution XB, XBt;
+		XB.x = x0;
+		XB.fit_fun(ff);
+
+		double max_s;
+
+		do {
+
+			for (int i = 0; i < n[0]; i++) {
+				XBt.x = XB.x + s(i) * D[i];
+				XBt.fit_fun(ff);
+
+				if (XBt.y < XB.y) {
+					XB = XBt;
+					l(i) += s(i);
+					s(i) *= alpha;
+				} else {
+					s(i) *= (-beta);
+					p(i)++;
+				}
+			}
+
+			bool change = true;
+			for (int i = 0; i < n[0]; i++) {
+				if (l(i) != 0 || p(i) != 0) {
+					change = false;
+					break;
+				}
+			}
+
+			// zmiana bazy kierunków
+			if (change) {
+				matrix Q(n[0], n[0]), v(n[0], 1);
+				for (int i = 0; i < n[0]; ++i) {
+					for (int j = 0; j <= i; ++j) {
+						Q(i, j) = l(i);
+					}
+				}
+
+				Q = D * Q;
+				v = Q[0] / norm(Q[0]);
+				D.set_col(v, 0);
+
+				for (int i = 1; i < n[0]; i++) {
+					matrix temp(n[0], 1);
+
+					for (int j = 0; j < i; j++) {
+						temp = trans(Q[j]) * D[j] * D[j];
+					}
+
+					v = Q[i] - temp / norm(Q[i] - temp);
+					D.set_col(v, i);
+				}
+
+				l = 0;
+				p = 0;
+				s = s0;
+			}
+
+			max_s = abs(s(0));
+
+			for (int i = 1; i < n[0]; ++i) {
+				if (max_s < abs(s(i))) max_s = abs(s(i));
+			}
+
+			if (solution::f_calls > Nmax) break;
+
+		} while (max_s < epsilon);
+
+		Xopt.x = XB.x;
 
 		return Xopt;
 	
