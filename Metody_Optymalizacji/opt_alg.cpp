@@ -213,45 +213,40 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alpha, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	
 	try {
-		solution Xopt;
-		solution XB(x0);
 		solution::clear_calls();
-		do {
 
-			solution X = HJ_trial(ff, XB, s);
-			XB.fit_fun(ff);
-			X.fit_fun(ff);
+		solution XB, _XB, X;
+		XB.x = x0;
+		XB.fit_fun(ff);
 
-			if (X.y(0) < XB.y(0)) {
+		while(true) {
 
-				do {
-					solution _XB(XB.x(0));
-					XB.x(0) = X.x(0);
-					X.x(0) = 2 * XB.x(0) - _XB.x(0);
+			X = HJ_trial(ff, XB, s);
+
+			if (X.y < XB.y) {
+
+				while(true) {
+					_XB = XB;
+					XB = X;
+					X.x = 2.0 * XB.x - _XB.x;
 					X = HJ_trial(ff, XB, s);
-					
-					if (solution::f_calls > Nmax) break;
-
 					X.fit_fun(ff);
-					XB.fit_fun(ff);
-				} while (X.y(0) >= XB.y(0));
 
-				X.x(0) = XB.x(0);
+					if (solution::f_calls > Nmax) break;
+					if (X.y >= XB.y) break;
 
+				};
 			}
 			else {
-
-				s = alpha * s;
-
+				s *= alpha;
 			}
 
-			if (solution::f_calls > Nmax) break;
+			if (solution::f_calls < Nmax) break;
+			if (s < epsilon) break;
 
-		} while (s < epsilon);
+		}
 
-		XB.fit_fun(ff);
-		Xopt = XB;
-		return Xopt;
+		return XB;
 	
 	} catch (string ex_info) {
 		throw ("solution HJ(...):\n" + ex_info);
@@ -261,24 +256,26 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 solution HJ_trial(matrix(*ff)(matrix, matrix, matrix), solution XB, double s, matrix ud1, matrix ud2) {
 	
 	try {
-		solution::clear_calls;
-		// wymiar XB, chyba
 		int* n = get_size(XB.x);
+		matrix D(n[0], n[0]);
+		for (int i = 0; i < n[0]; i++) {
+			D(i, i) = 1;
+		}
+		solution X;
 
-		solution X1, X2;
+		for (int j = 0; j < n[0]; j++) {
 
-		for (int j = 1; j < n[0]; j++) {
-
-			X1.x = (XB.x + s * exp(j));
-			X2.x = (XB.x - s * exp(j));
-			X1.fit_fun(ff);
-			X2.fit_fun(ff);
-
-			if (X1.y < XB.y) {
-				XB = X1;
+			X.x = (XB.x + s * D[j]);
+			X.fit_fun(ff);
+			if (X.y < XB.y) {
+				XB = X;
 			}
-			else if (X2.y < XB.y) {
-				XB = X2;
+			else {
+				X.x = (XB.x - s * D[j]);
+				X.fit_fun(ff);
+				if (X.y < XB.y) {
+					XB = X;
+				}
 			}
 
 		}
@@ -294,7 +291,7 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 	
 	try {
 
-		solution::clear_calls;
+		solution::clear_calls();
 
 		solution Xopt;
 		//Tu wpisz kod funkcji
@@ -318,7 +315,7 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 				XBt.x = XB.x + s(i) * D[i];
 				XBt.fit_fun(ff);
 
-				if (XBt.y < XB.y) {
+				if (XBt.y(0) < XB.y(0)) {
 					XB = XBt;
 					l(i) += s(i);
 					s(i) *= alpha;
@@ -353,15 +350,15 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 					matrix temp(n[0], 1);
 
 					for (int j = 0; j < i; j++) {
-						temp = trans(Q[j]) * D[j] * D[j];
+						temp = temp + trans(Q[i]) * D[j] * D[j];
 					}
 
 					v = Q[i] - temp / norm(Q[i] - temp);
 					D.set_col(v, i);
 				}
 
-				l = 0;
-				p = 0;
+				l = matrix(n[0], 1);
+				p = matrix(n[0], 1);
 				s = s0;
 			}
 
@@ -373,7 +370,7 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 
 			if (solution::f_calls > Nmax) break;
 
-		} while (max_s < epsilon);
+		} while (max_s > epsilon);
 
 		Xopt.x = XB.x;
 

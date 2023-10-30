@@ -40,7 +40,7 @@ int main() {
 void lab0() {
 	//Funkcja testowa
 	double epsilon = 1e-2;
-	int Nmax = 10000;
+	int Nmax = 1000;
 	matrix lb(2, 1, -5), ub(2, 1, 5), a(2, 1);
 	solution opt;
 	a(0) = -1;
@@ -167,26 +167,27 @@ void lab2() {
 	
 	double x1 = 2.0 * R() / R.max() - 1.0;
 	double x2 = 2.0 * R() / R.max() - 1.0;
+	//double x1 = 0.0;
+	//double x2 = 0.0;
 	
-	double s = 4;
-	double epsilon = 1e-7, s2 = 2;
-	int Nmax = 1000;
+	double s = 0.001;
+	double epsilon = 0.0001;
+	int Nmax = 10000;
 	
-	double alphaHJ = 0.3;
+	double alphaHJ = 0.5;
 	double alphaR = 2, beta = 0.5;
 
 	matrix x = matrix(2, new double[2] {x1, x2});
-	matrix s0 = matrix(2, new double[2] {1, 1});
+	matrix s0 = matrix(2, new double[2] {0.001, 0.001});
 
 	cout << "x1: " << x1 << ", x2: " << x2 << "\n";
 
 	solution hj = HJ(f2, x, s, alphaHJ, epsilon, Nmax);
-	solution r = Rosen(f2, x, s0, alphaR, beta, epsilon, Nmax);
-
 	hj.fit_fun(f2);
-	r.fit_fun(f2);
-
 	cout << "HJ: \n" << hj << "\n";
+
+	solution r = Rosen(f2, x, s0, alphaR, beta, epsilon, Nmax);
+	r.fit_fun(f2);
 	cout << "Rosen: \n" << r << "\n";
 
 }
