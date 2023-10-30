@@ -51,4 +51,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="hj.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="rosen.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

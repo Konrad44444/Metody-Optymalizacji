@@ -213,6 +213,10 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alpha, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	
 	try {
+
+		fstream file;
+		file.open("hj.txt");
+
 		solution::clear_calls();
 
 		solution XB, _XB, X;
@@ -226,6 +230,9 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 			if (X.y < XB.y) {
 
 				while(true) {
+
+					file << X.x(0) << ";" << X.x(1) << "\n";
+
 					_XB = XB;
 					XB = X;
 					X.x = 2.0 * XB.x - _XB.x;
@@ -245,6 +252,8 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 			if (s < epsilon) break;
 
 		}
+
+		file.close();
 
 		return XB;
 	
@@ -290,6 +299,8 @@ solution HJ_trial(matrix(*ff)(matrix, matrix, matrix), solution XB, double s, ma
 solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double alpha, double beta, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	
 	try {
+		fstream file;
+		file.open("rosen.txt");
 
 		solution::clear_calls();
 
@@ -312,6 +323,9 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 		do {
 
 			for (int i = 0; i < n[0]; i++) {
+
+				file << XB.x(1) << ";" << XB.x(1) << "\n";
+
 				XBt.x = XB.x + s(i) * D[i];
 				XBt.fit_fun(ff);
 
@@ -371,6 +385,8 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 			if (solution::f_calls > Nmax) break;
 
 		} while (max_s > epsilon);
+
+		file.close();
 
 		Xopt.x = XB.x;
 

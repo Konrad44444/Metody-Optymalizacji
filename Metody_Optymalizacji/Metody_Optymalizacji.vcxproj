@@ -141,6 +141,10 @@
     <ClInclude Include="solution.h" />
     <ClInclude Include="user_funs.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="hj.txt" />
+    <Text Include="rosen.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
