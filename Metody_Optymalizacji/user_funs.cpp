@@ -80,6 +80,15 @@ matrix f2(matrix x, matrix ud1, matrix ud2)
 	return pow(x(0), 2) + pow(x(1), 2) - cos(2.5 * M_PI * x(0)) - cos(2.5 * M_PI * x(1)) + 2;
 }
 
+matrix df2(matrix Y, matrix ud1, matrix ud2) {
+	double mc = 9.5, mr = 1, l = 0.6, b = 0.5;
+	double I = (mr * l * l) / 3 + (mc * l * l);
+	matrix dY(2, 1);
+	dY(0) = Y(1);
+	dY(1) = (ud2(0) * (ud1(0) - Y(0)) + ud2(1) * (ud1(1) - Y(1)) - b * Y(1)) / I;
+	return dY;
+}
+
 matrix ff2R(matrix x, matrix ud1, matrix ud2) {
 
 	matrix y;
