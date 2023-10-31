@@ -80,7 +80,7 @@ matrix f2(matrix x, matrix ud1, matrix ud2)
 	return pow(x(0), 2) + pow(x(1), 2) - cos(2.5 * M_PI * x(0)) - cos(2.5 * M_PI * x(1)) + 2;
 }
 
-matrix df2(matrix Y, matrix ud1, matrix ud2) {
+matrix df2(double x, matrix Y, matrix ud1, matrix ud2) {
 	double mc = 9.5, mr = 1, l = 0.6, b = 0.5;
 	double I = (mr * l * l) / 3 + (mc * l * l);
 	matrix dY(2, 1);
