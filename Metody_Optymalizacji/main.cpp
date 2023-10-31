@@ -168,6 +168,8 @@ void lab2() {
 	fstream file1;
 	fstream file2;
 
+	// symulacja 100 razy z 3 ró¿nymi krokami
+
 	/*file1.open("hj.txt");
 	file2.open("rosen.txt");
 
@@ -207,7 +209,9 @@ void lab2() {
 	file1.close();
 	file2.close();*/
 
-	double x1 = 0.2661680;
+	// do wykresu
+
+	/*double x1 = 0.2661680;
 	double x2 = 0.1869780;
 
 	double alphaHJ = 0.5;
@@ -221,8 +225,24 @@ void lab2() {
 
 
 	solution hj = HJ(f2, x, step, alphaHJ, epsilon, Nmax);
-	solution r = Rosen(f2, x, s0, alphaR, beta, epsilon, Nmax);
+	solution r = Rosen(f2, x, s0, alphaR, beta, epsilon, Nmax);*/
 
+	double k1 = 20.0 * R() - 10.0;
+	double k2 = 20.0 * R() - 10.0;
+
+	double alphaHJ = 0.5;
+	double alphaR = 2, beta = 0.5;
+	double epsilon = 0.0001;
+	int Nmax = 10000;
+	double step = 0.01;
+
+	matrix x = matrix(2, new double[2]{ k1, k2 });
+	matrix s0 = matrix(2, new double[2]{ step, step });
+
+	solution hj = (ff2R, x, step, alphaHJ, epsilon, Nmax);
+	solution r = Rosen(ff2R, x, s0, alphaR, beta, epsilon, Nmax);
+	//2,8; 3,8
+	cout << "HJ:\n" << hj << "\nRosen:\n" << r << "\n";
 }
 
 void lab3() {

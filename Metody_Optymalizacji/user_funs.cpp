@@ -80,19 +80,28 @@ matrix f2(matrix x, matrix ud1, matrix ud2)
 	return pow(x(0), 2) + pow(x(1), 2) - cos(2.5 * M_PI * x(0)) - cos(2.5 * M_PI * x(1)) + 2;
 }
 
+matrix df2(double x, matrix Y, matrix ud1, matrix ud2) {
+	double mc = 9.5, mr = 1, l = 0.6, b = 0.5;
+	double I = (mr * l * l) / 3 + (mc * l * l);
+	matrix dY(2, 1);
+	dY(0) = Y(1);
+	dY(1) = (ud2(0) * (ud1(0) - Y(0)) + ud2(1) * (ud1(1) - Y(1)) - b * Y(1)) / I;
+	return dY;
+}
+
 matrix ff2R(matrix x, matrix ud1, matrix ud2) {
 
 	matrix y;
-	matrix Y0(2, 1), Yret(2, new double[2]{ 3.14,0 });
-	matrix* Y = solve_ode(df2, 0, 0.1, 1000, Y0, Yret, x);
-	int n = get_len[Y[0]];
+	matrix Y0(2, 1), Yref(2, new double[2]{ 3.14,0 });
+	matrix* Y = solve_ode(df2, 0, 0.1, 1000, Y0, Yref, x);
+	int n = get_len(Y[0]);
 
 	y = 0;
-	for (int i 0; i < n[0]; i++) {
+	for (int i = 0; i < n; i++) {
 
-		y += 10 * pow(Yref(0) - Y[1](i, 0), 2) + pow(Yref(1) - Y[1](i, 1), 2) +
+		y = y + 10 * pow(Yref(0) - Y[1](i, 0), 2) + pow(Yref(1) - Y[1](i, 1), 2) +
 			pow(x(0) * (Yref(0) - Y[1](i, 0)) + x(1) * (Yref(1) - Y[1](i, 1)));
-		y *= 0.1;
+		y = y * 0.1;
 
 	}
 
