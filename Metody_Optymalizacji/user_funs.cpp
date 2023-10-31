@@ -83,16 +83,16 @@ matrix f2(matrix x, matrix ud1, matrix ud2)
 matrix ff2R(matrix x, matrix ud1, matrix ud2) {
 
 	matrix y;
-	matrix Y0(2, 1), Yret(2, new double[2]{ 3.14,0 });
-	matrix* Y = solve_ode(df2, 0, 0.1, 1000, Y0, Yret, x);
-	int* n = get_len[Y[0]];
+	matrix Y0(2, 1), Yref(2, new double[2]{ 3.14,0 });
+	matrix* Y = solve_ode(df2, 0, 0.1, 1000, Y0, Yref, x);
+	int n = get_len(Y[0]);
 
 	y = 0;
-	for (int i 0; i < n[0]; i++) {
+	for (int i = 0; i < n; i++) {
 
-		y += 10 * pow(Yref(0) - Y[1](i, 0), 2) + pow(Yref(1) - Y[1](i, 1), 2) +
+		y = y + 10 * pow(Yref(0) - Y[1](i, 0), 2) + pow(Yref(1) - Y[1](i, 1), 2) +
 			pow(x(0) * (Yref(0) - Y[1](i, 0)) + x(1) * (Yref(1) - Y[1](i, 1)));
-		y *= 0.1;
+		y = y * 0.1;
 
 	}
 
