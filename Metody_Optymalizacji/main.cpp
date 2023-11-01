@@ -227,22 +227,29 @@ void lab2() {
 	solution hj = HJ(f2, x, step, alphaHJ, epsilon, Nmax);
 	solution r = Rosen(f2, x, s0, alphaR, beta, epsilon, Nmax);*/
 
-	double k1 = 20.0 * R() - 10.0;
-	double k2 = 20.0 * R() - 10.0;
+	double k1 = 10.0 * R() / R.max();
+	double k2 = 10.0 * R() / R.max();
+
+	cout << "k1: " << k1 << ", k2: " << k2 << "\n";
 
 	double alphaHJ = 0.5;
 	double alphaR = 2, beta = 0.5;
 	double epsilon = 0.0001;
 	int Nmax = 10000;
-	double step = 0.01;
+	double step = 0.5;
 
 	matrix x = matrix(2, new double[2]{ k1, k2 });
 	matrix s0 = matrix(2, new double[2]{ step, step });
 
-	solution hj = (ff2R, x, step, alphaHJ, epsilon, Nmax);
-	solution r = Rosen(ff2R, x, s0, alphaR, beta, epsilon, Nmax);
 	//2,8; 3,8
-	cout << "HJ:\n" << hj << "\nRosen:\n" << r << "\n";
+	
+	solution hj = HJ(ff2R, x, step, alphaHJ, epsilon, Nmax);
+	hj.fit_fun(ff2R);
+	cout << "HJ:\n" << hj << "\n"; 
+	
+	solution r = Rosen(ff2R, x, s0, alphaR, beta, epsilon, Nmax);
+	r.fit_fun(ff2R);
+	cout << "Rosen:\n" << r << "\n";
 }
 
 void lab3() {
