@@ -232,22 +232,22 @@ void lab2() {
 
 	cout << "k1: " << k1 << ", k2: " << k2 << "\n";
 
-	double alphaHJ = 0.5;
-	double alphaR = 2, beta = 0.5;
+	double alphaHJ = 0.7;
+	double alphaR = 2, beta = 0.7;
 	double epsilon = 0.0001;
-	int Nmax = 10000;
-	double step = 0.5;
+	int Nmax = 1000;
+	double step = 0.1;
 
-	matrix x = matrix(2, new double[2]{ k1, k2 });
+	matrix x0 = matrix(2, new double[2]{ k1, k2 });
 	matrix s0 = matrix(2, new double[2]{ step, step });
 
 	//2,8; 3,8
 	
-	solution hj = HJ(ff2R, x, step, alphaHJ, epsilon, Nmax);
+	solution hj = HJ(ff2R, x0, step, alphaHJ, epsilon, Nmax);
 	hj.fit_fun(ff2R);
 	cout << "HJ:\n" << hj << "\n"; 
 	
-	solution r = Rosen(ff2R, x, s0, alphaR, beta, epsilon, Nmax);
+	solution r = Rosen(ff2R, x0, s0, alphaR, beta, epsilon, Nmax);
 	r.fit_fun(ff2R);
 	cout << "Rosen:\n" << r << "\n";
 }
