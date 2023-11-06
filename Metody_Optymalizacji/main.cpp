@@ -232,9 +232,9 @@ void lab2() {
 
 	cout << "k1: " << k1 << ", k2: " << k2 << "\n";
 
-	double alphaHJ = 0.7;
-	double alphaR = 2, beta = 0.7;
-	double epsilon = 0.0001;
+	double alphaHJ = 0.75;
+	double alphaR = 2.0, beta = 0.7;
+	double epsilon = 0.001;
 	int Nmax = 1000;
 	double step = 0.1;
 
