@@ -163,93 +163,104 @@ void lab1() {
 }
 
 void lab2() {
-	random_device R;
+	//random_device R;
 
-	fstream file1;
-	fstream file2;
+	//fstream file1;
+	//fstream file2;
 
-	// symulacja 100 razy z 3 ró¿nymi krokami
+	//// symulacja 100 razy z 3 ró¿nymi krokami
 
-	/*file1.open("hj.txt");
-	file2.open("rosen.txt");
+	///*file1.open("hj.txt");
+	//file2.open("rosen.txt");
 
-	double s[] = { 0.001, 0.01, 0.005 };
-	
-	for (int i = 0; i < 3; i++) {
+	//double s[] = { 0.001, 0.01, 0.005 };
+	//
+	//for (int i = 0; i < 3; i++) {
 
-		double step = s[i];
+	//	double step = s[i];
 
 
-		for (int j = 0; j < 100; j++) {
+	//	for (int j = 0; j < 100; j++) {
 
-			double x1 = 2.0 * R() / R.max() - 1.0;
-			double x2 = 2.0 * R() / R.max() - 1.0;
-	
-			double epsilon = 0.0001;
-			int Nmax = 10000;
-	
-			double alphaHJ = 0.5;
-			double alphaR = 2, beta = 0.5;
+	//		double x1 = 2.0 * R() / R.max() - 1.0;
+	//		double x2 = 2.0 * R() / R.max() - 1.0;
+	//
+	//		double epsilon = 0.0001;
+	//		int Nmax = 10000;
+	//
+	//		double alphaHJ = 0.5;
+	//		double alphaR = 2, beta = 0.5;
 
-			matrix x = matrix(2, new double[2] {x1, x2});
-			matrix s0 = matrix(2, new double[2] {step, step});
+	//		matrix x = matrix(2, new double[2] {x1, x2});
+	//		matrix s0 = matrix(2, new double[2] {step, step});
 
-			solution hj = HJ(f2, x, step, alphaHJ, epsilon, Nmax);
-			hj.fit_fun(f2);
-			file1 << x1 << ";" << x2 << ";" << hj.x(0) << ";" << hj.x(1) << ";" << hj.y(0) << ";" << solution::f_calls << ";" << (abs(hj.y(0)) < 0.001 ? "TAK" : "NIE") << "\n";
+	//		solution hj = HJ(f2, x, step, alphaHJ, epsilon, Nmax);
+	//		hj.fit_fun(f2);
+	//		file1 << x1 << ";" << x2 << ";" << hj.x(0) << ";" << hj.x(1) << ";" << hj.y(0) << ";" << solution::f_calls << ";" << (abs(hj.y(0)) < 0.001 ? "TAK" : "NIE") << "\n";
 
-			solution r = Rosen(f2, x, s0, alphaR, beta, epsilon, Nmax);
-			r.fit_fun(f2);
-			file2 << r.x(0) << ";" << r.x(1) << ";" << r.y(0) << ";" << solution::f_calls << ";" << (abs(r.y(0)) < 0.001 ? "TAK" : "NIE") << "\n";
+	//		solution r = Rosen(f2, x, s0, alphaR, beta, epsilon, Nmax);
+	//		r.fit_fun(f2);
+	//		file2 << r.x(0) << ";" << r.x(1) << ";" << r.y(0) << ";" << solution::f_calls << ";" << (abs(r.y(0)) < 0.001 ? "TAK" : "NIE") << "\n";
 
-		}
+	//	}
 
+	//}
+
+	//file1.close();
+	//file2.close();*/
+
+	//// do wykresu
+
+	///*double x1 = 0.2661680;
+	//double x2 = 0.1869780;
+
+	//double alphaHJ = 0.5;
+	//double alphaR = 2, beta = 0.5;
+	//double epsilon = 0.0001;
+	//int Nmax = 10000;
+	//double step = 0.001;
+
+	//matrix x = matrix(2, new double[2] {x1, x2});
+	//matrix s0 = matrix(2, new double[2] {step, step});
+
+
+	//solution hj = HJ(f2, x, step, alphaHJ, epsilon, Nmax);
+	//solution r = Rosen(f2, x, s0, alphaR, beta, epsilon, Nmax);*/
+
+	//double k1 = 10.0 * R() / R.max();
+	//double k2 = 10.0 * R() / R.max();
+
+	//cout << "k1: " << k1 << ", k2: " << k2 << "\n";
+
+	//double alphaHJ = 0.75;
+	//double alphaR = 2.0, beta = 0.7;
+	//double epsilon = 0.001;
+	//int Nmax = 1000;
+	//double step = 0.1;
+
+	//matrix x0 = matrix(2, new double[2]{ k1, k2 });
+	//matrix s0 = matrix(2, new double[2]{ step, step });
+
+	////2,8; 3,8
+	//
+	//solution hj = HJ(ff2R, x0, step, alphaHJ, epsilon, Nmax);
+	//hj.fit_fun(ff2R);
+	//cout << "HJ:\n" << hj << "\n"; 
+	//
+	//solution r = Rosen(ff2R, x0, s0, alphaR, beta, epsilon, Nmax);
+	//r.fit_fun(ff2R);
+	//cout << "Rosen:\n" << r << "\n";
+
+	matrix Y0(2, 1), Yref(2, new double[2] { 3.14, 0 }), X(2, new double[2] { 2.81863, 3.84227 });
+	matrix* Y = solve_ode(df2, 0, 0.1, 1000, Y0, Yref, X);
+
+	fstream file;
+	file.open("Rosen_sim.txt");
+
+	if (file.good()) {
+		file << Y[1];
 	}
-
-	file1.close();
-	file2.close();*/
-
-	// do wykresu
-
-	/*double x1 = 0.2661680;
-	double x2 = 0.1869780;
-
-	double alphaHJ = 0.5;
-	double alphaR = 2, beta = 0.5;
-	double epsilon = 0.0001;
-	int Nmax = 10000;
-	double step = 0.001;
-
-	matrix x = matrix(2, new double[2] {x1, x2});
-	matrix s0 = matrix(2, new double[2] {step, step});
-
-
-	solution hj = HJ(f2, x, step, alphaHJ, epsilon, Nmax);
-	solution r = Rosen(f2, x, s0, alphaR, beta, epsilon, Nmax);*/
-
-	double k1 = 10.0 * R() / R.max();
-	double k2 = 10.0 * R() / R.max();
-
-	cout << "k1: " << k1 << ", k2: " << k2 << "\n";
-
-	double alphaHJ = 0.75;
-	double alphaR = 2.0, beta = 0.7;
-	double epsilon = 0.001;
-	int Nmax = 1000;
-	double step = 0.1;
-
-	matrix x0 = matrix(2, new double[2]{ k1, k2 });
-	matrix s0 = matrix(2, new double[2]{ step, step });
-
-	//2,8; 3,8
-	
-	solution hj = HJ(ff2R, x0, step, alphaHJ, epsilon, Nmax);
-	hj.fit_fun(ff2R);
-	cout << "HJ:\n" << hj << "\n"; 
-	
-	solution r = Rosen(ff2R, x0, s0, alphaR, beta, epsilon, Nmax);
-	r.fit_fun(ff2R);
-	cout << "Rosen:\n" << r << "\n";
+	file.close();
 }
 
 void lab3() {
