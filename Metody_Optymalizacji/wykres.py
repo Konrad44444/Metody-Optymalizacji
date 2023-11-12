@@ -24,16 +24,16 @@ plt.imshow(Z, extent=[x.min(), x.max(), y.min(), y.max()], origin='lower',
 plt.colorbar()
 
 # Add labels and title
-plt.xlabel('x')
-plt.ylabel('y')
-plt.title('$x^2 + y^2 - \cos(2.5\pi x) - \cos(2.5\pi y) + 2$\nCzerwony - HJ, Niebieski - Rosen')
+plt.xlabel('x1')
+plt.ylabel('x2')
+plt.title('$x1^2 + x2^2 - \cos(2.5\pi x1) - \cos(2.5\pi x2) + 2$\nCzerwony - HJ, Niebieski - Rosen')
 
-with open('Metody_Optymalizacji\\hj.txt', 'r') as file:
+with open('C:\\Users\\Konrad\\Desktop\\Metody_Optymalizacji\\Metody_Optymalizacji\\hj.txt', 'r') as file:
     for line in file:
         x, y = map(float, line.strip().split(';'))
         plt.scatter(x, y, color='red', marker='o', s=15)
         
-with open('Metody_Optymalizacji\\rosen.txt', 'r') as file:
+with open('C:\\Users\\Konrad\\Desktop\\Metody_Optymalizacji\\Metody_Optymalizacji\\rosen.txt', 'r') as file:
     for line in file:
         x, y = map(float, line.strip().split(';'))
         plt.scatter(x, y, color='blue', marker='o', s=15)
