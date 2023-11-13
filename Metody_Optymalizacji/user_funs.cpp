@@ -110,3 +110,49 @@ matrix ff2R(matrix x, matrix ud1, matrix ud2) {
 	return y;
 
 }
+
+matrix f3_zewn(matrix x, matrix ud1, matrix ud2) {
+	matrix y;
+
+	y = (sin(M_PI * sqrt(pow(x(0) / M_PI, 2) + pow(x(1) / M_PI, 2))) / (M_PI * sqrt(pow(x(0) / M_PI, 2) + pow(x(1) / M_PI, 2))));
+
+	if (-x(0) + 1 > 0) {
+		y = y + ud2 * pow(-x(0) + 1, 2);
+	}
+
+	if (-x(1) + 1 > 0) {
+		y = y + ud2 * pow(-x(1) + 1, 2);
+	}
+
+	if (norm(x) - ud1 > 0) {
+		y = y + ud2 * pow(norm(x) - ud1, 2);
+	}
+
+	return y;
+}
+
+matrix f3_wewn(matrix x, matrix ud1, matrix ud2) {
+	matrix y;
+
+	y = (sin(M_PI * sqrt(pow(x(0) / M_PI, 2) + pow(x(1) / M_PI, 2))) / (M_PI * sqrt(pow(x(0) / M_PI, 2) + pow(x(1) / M_PI, 2))));
+
+	if (-x(0) + 1 > 0) {
+		y = 1e10;
+	} else  {
+		y = y - ud2 / (-x(0) + 1);
+	}
+
+	if (-x(1) + 1 > 0) {
+		y = 1e10;
+	} else {
+		y = y - ud2 / (-x(1) + 1);
+	}
+
+	if (norm(x) - ud1 > 0) {
+		y = 1e10;
+	} else {
+		y = y - ud2 / (norm(x) - ud1);
+	}
+
+	return y;
+}
