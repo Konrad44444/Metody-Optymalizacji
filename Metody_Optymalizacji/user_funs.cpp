@@ -132,6 +132,8 @@ matrix f3_zewn(matrix x, matrix ud1, matrix ud2) {
 }
 
 matrix f3_wewn(matrix x, matrix ud1, matrix ud2) {
+	// ud2 - c
+	// ud1 - a
 	matrix y;
 
 	y = (sin(M_PI * sqrt(pow(x(0) / M_PI, 2) + pow(x(1) / M_PI, 2))) / (M_PI * sqrt(pow(x(0) / M_PI, 2) + pow(x(1) / M_PI, 2))));
