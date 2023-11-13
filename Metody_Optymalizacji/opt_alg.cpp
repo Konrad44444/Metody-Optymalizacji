@@ -403,6 +403,7 @@ solution pen(matrix(*ff)(matrix, matrix, matrix), matrix x0, double c, double dc
 		solution Xopt;
 		//Tu wpisz kod funkcji
 
+		// c - parametr przez ktory poczatkowo mnozymy,  c = 1, dc > 1; c = 10, dc < 1
 		return Xopt;
 	} catch (string ex_info) {
 		throw ("solution pen(...):\n" + ex_info);
@@ -412,10 +413,105 @@ solution pen(matrix(*ff)(matrix, matrix, matrix), matrix x0, double c, double dc
 solution sym_NM(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alpha, double beta, double gamma, double delta, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	
 	try {
+
 		solution Xopt;
-		//Tu wpisz kod funkcji
+		solution P0;
+		P0.x = x0;
+
+		int* n = get_size(x0);
+		solution* P = new solution[n[0]];
+		double e = 2.7182818285;
+
+		int max = 0;
+		int min = 0;
+
+		solution Pcenter(0);
+		solution Podb;
+		solution Pe;
+		solution Pz;
+
+		double max_norm;
+
+		for (int i = 0; i < n[0]; i++) {
+			P[i].x(0) = P0.x(0) + s * pow(e, i);
+		}
+
+		do {
+			for (int i = 0; i < n[0]; i++) {
+				P[i].fit_fun(ff);
+			}
+
+			for (int i = 1; i < n[0]; i++) {
+				if (P[i].y(0) > P[max].y(0))
+					max = i;
+				if (P[i].y(0) < P[min].y(0))
+					min = i;
+			}
+			if (min == max) break;
+
+			for (int i = 0; i < n[0]; i++) {
+				if (i != max) {
+					Pcenter.x(0) += P[i].x(0);
+				}
+			}
+			Pcenter.x(0) /= n[0];
+
+			Podb.x(0) = Pcenter.x(0) + alpha * (Pcenter.x(0) - P[max].x(0));
+			
+			Podb.fit_fun(ff);
+			P[min].fit_fun(ff);
+			P[max].fit_fun(ff);
+
+			if (Podb.y(0) < P[min].y(0)) {
+
+				Pe.x(0) = Pcenter.x(0) + gamma * (Podb.x(0) - Pcenter.x(0));
+				Pe.fit_fun(ff);
+				if (Pe.y(0) < Podb.y(0))
+					P[max] = Pe;
+				else
+					P[max] = Podb;
+
+			}
+			else {
+
+				if (P[min].y(0) <= Podb.y(0) && Podb.y(0) < P[max].y(0)) {
+					P[max] = Podb;
+				}
+				else {
+
+					Pz.x(0) = Pcenter.x(0) + beta * (Podb.x(0) - Pcenter.x(0));
+					Pz.fit_fun(ff);
+
+					if (Pz.y(0) >= P[max].y(0)) {
+
+						for (int i = 0; i < n[0]; i++) {
+							if (i != min)
+								P[i].x(0) = delta * (P[i].x(0) + P[min].x(0));
+						}
+					}
+					else {
+						P[max] = Pz;
+					}
+				}
+			}
+
+			if (solution::f_calls > Nmax) break;
+			
+			max_norm = 0.0;
+			for (int i = 0; i < n[0]; i++) {
+				double norm = pow(P[min].x(0) - P[i].x(0), 2);
+				if (norm > max_norm) {
+					max_norm = norm;
+				}
+			}
+			max_norm = sqrt(max_norm);
+
+		} while (max_norm >= epsilon);
+
+		Xopt = P[min];
 
 		return Xopt;
+
 	} catch (string ex_info) {
 		throw ("solution sym_NM(...):\n" + ex_info);
 	}
