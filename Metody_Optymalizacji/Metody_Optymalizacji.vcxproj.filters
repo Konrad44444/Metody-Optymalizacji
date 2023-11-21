@@ -58,5 +58,11 @@
     <Text Include="rosen.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="HJ_sim.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Rosen_sim.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

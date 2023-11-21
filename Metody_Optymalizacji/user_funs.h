@@ -11,3 +11,5 @@ matrix ff1R(matrix x, matrix ud1, matrix ud2);
 matrix f2(matrix x1, matrix x2, matrix ud1);
 matrix df2(double, matrix Y, matrix ud1, matrix ud2);
 matrix ff2R(matrix x, matrix ud1, matrix ud2);
+matrix f3_zewn(matrix x, matrix ud1, matrix ud2);
+matrix f3_wewn(matrix x, matrix ud1, matrix ud2);

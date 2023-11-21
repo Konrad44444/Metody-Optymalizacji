@@ -96,15 +96,65 @@ matrix ff2R(matrix x, matrix ud1, matrix ud2) {
 	matrix* Y = solve_ode(df2, 0, 0.1, 1000, Y0, Yref, x);
 	int n = get_len(Y[0]);
 
-	y = 0;
+	double temp = 0;
 	for (int i = 0; i < n; i++) {
 
-		y = y + 10 * pow(Yref(0) - Y[1](i, 0), 2) + pow(Yref(1) - Y[1](i, 1), 2) +
-			pow(x(0) * (Yref(0) - Y[1](i, 0)) + x(1) * (Yref(1) - Y[1](i, 1)));
-		y = y * 0.1;
+		temp = temp + 10 * pow(Yref(0) - Y[1](i, 0), 2) + pow(Yref(1) - Y[1](i, 1), 2) +
+			pow(x(0) * (Yref(0) - Y[1](i, 0)) + x(1) * (Yref(1) - Y[1](i, 1)), 2);
 
 	}
+	temp = temp * 0.1;
+
+	y = temp;
 
 	return y;
 
+}
+
+matrix f3_zewn(matrix x, matrix ud1, matrix ud2) {
+	matrix y;
+
+	y = (sin(M_PI * sqrt(pow(x(0) / M_PI, 2) + pow(x(1) / M_PI, 2))) / (M_PI * sqrt(pow(x(0) / M_PI, 2) + pow(x(1) / M_PI, 2))));
+
+	if (-x(0) + 1 > 0) {
+		y = y + ud2 * pow(-x(0) + 1, 2);
+	}
+
+	if (-x(1) + 1 > 0) {
+		y = y + ud2 * pow(-x(1) + 1, 2);
+	}
+
+	if (norm(x) - ud1 > 0) {
+		y = y + ud2 * pow(norm(x) - ud1, 2);
+	}
+
+	return y;
+}
+
+matrix f3_wewn(matrix x, matrix ud1, matrix ud2) {
+	// ud2 - c
+	// ud1 - a
+	matrix y;
+
+	y = (sin(M_PI * sqrt(pow(x(0) / M_PI, 2) + pow(x(1) / M_PI, 2))) / (M_PI * sqrt(pow(x(0) / M_PI, 2) + pow(x(1) / M_PI, 2))));
+
+	if (-x(0) + 1 > 0) {
+		y = 1e10;
+	} else  {
+		y = y - ud2 / (-x(0) + 1);
+	}
+
+	if (-x(1) + 1 > 0) {
+		y = 1e10;
+	} else {
+		y = y - ud2 / (-x(1) + 1);
+	}
+
+	if (norm(x) - ud1 > 0) {
+		y = 1e10;
+	} else {
+		y = y - ud2 / (norm(x) - ud1);
+	}
+
+	return y;
 }
