@@ -414,13 +414,19 @@ solution sym_NM(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double
 	
 	try {
 
-		solution Xopt;
 		solution P0;
 		P0.x = x0;
 
 		int* n = get_size(x0);
-		solution* P = new solution[n[0]];
-		double e = 2.7182818285;
+		int N = n[0] + 1; //wierzcholki sympleksu
+		solution* P = new solution[N];
+
+		matrix e(N, n[0]);
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < n[0]; j++) {
+				e(i, j) = 1;
+			}
+		}
 
 		int max = 0;
 		int min = 0;
@@ -432,41 +438,43 @@ solution sym_NM(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double
 
 		double max_norm;
 
-		for (int i = 0; i < n[0]; i++) {
-			P[i].x(0) = P0.x(0) + s * pow(e, i);
+		for (int i = 0; i < N; i++) {
+			P[i].x = P0.x + s * e[i];
 		}
 
-		do {
-			for (int i = 0; i < n[0]; i++) {
-				P[i].fit_fun(ff);
+		while(true) {
+
+			for (int i = 0; i < N; i++) {
+				P[i].fit_fun(ff, ud1, ud2);
 			}
 
-			for (int i = 1; i < n[0]; i++) {
-				if (P[i].y(0) > P[max].y(0))
+			for (int i = 1; i < N; i++) {
+				if (P[i].y > P[max].y)
 					max = i;
-				if (P[i].y(0) < P[min].y(0))
+				if (P[i].y < P[min].y)
 					min = i;
 			}
+
 			if (min == max) break;
 
-			for (int i = 0; i < n[0]; i++) {
+			for (int i = 0; i < N; i++) {
 				if (i != max) {
-					Pcenter.x(0) += P[i].x(0);
+					Pcenter.x = Pcenter.x + P[i].x;
 				}
 			}
-			Pcenter.x(0) /= n[0];
+			Pcenter.x = Pcenter.x / n[0];
 
-			Podb.x(0) = Pcenter.x(0) + alpha * (Pcenter.x(0) - P[max].x(0));
+			Podb.x = Pcenter.x + alpha * (Pcenter.x - P[max].x);
 			
-			Podb.fit_fun(ff);
-			P[min].fit_fun(ff);
-			P[max].fit_fun(ff);
+			Podb.fit_fun(ff, ud1, ud2);
+			P[min].fit_fun(ff, ud1, ud2);
+			P[max].fit_fun(ff, ud1, ud2);
 
-			if (Podb.y(0) < P[min].y(0)) {
+			if (Podb.y < P[min].y) {
 
-				Pe.x(0) = Pcenter.x(0) + gamma * (Podb.x(0) - Pcenter.x(0));
-				Pe.fit_fun(ff);
-				if (Pe.y(0) < Podb.y(0))
+				Pe.x = Pcenter.x + gamma * (Podb.x - Pcenter.x);
+				Pe.fit_fun(ff, ud1, ud2);
+				if (Pe.y < Podb.y)
 					P[max] = Pe;
 				else
 					P[max] = Podb;
@@ -474,19 +482,19 @@ solution sym_NM(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double
 			}
 			else {
 
-				if (P[min].y(0) <= Podb.y(0) && Podb.y(0) < P[max].y(0)) {
+				if (P[min].y <= Podb.y && Podb.y < P[max].y) {
 					P[max] = Podb;
 				}
 				else {
 
-					Pz.x(0) = Pcenter.x(0) + beta * (Podb.x(0) - Pcenter.x(0));
+					Pz.x = Pcenter.x + beta * (Podb.x - Pcenter.x);
 					Pz.fit_fun(ff);
 
-					if (Pz.y(0) >= P[max].y(0)) {
+					if (Pz.y >= P[max].y) {
 
-						for (int i = 0; i < n[0]; i++) {
+						for (int i = 0; i < N; i++) {
 							if (i != min)
-								P[i].x(0) = delta * (P[i].x(0) + P[min].x(0));
+								P[i].x = delta * (P[i].x + P[min].x);
 						}
 					}
 					else {
@@ -495,22 +503,15 @@ solution sym_NM(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double
 				}
 			}
 
-			if (solution::f_calls > Nmax) break;
-			
-			max_norm = 0.0;
-			for (int i = 0; i < n[0]; i++) {
-				double norm = pow(P[min].x(0) - P[i].x(0), 2);
-				if (norm > max_norm) {
-					max_norm = norm;
-				}
-			}
-			max_norm = sqrt(max_norm);
+			double max_s = norm(P[0].x - P[min].x);
 
-		} while (max_norm >= epsilon);
+			for (int i = 1; i < N; ++i)
+				if (max_s < norm(P[i].x - P[min].x))
+					max_s = norm(P[i].x - P[min].x);
+			if (max_s < epsilon || solution::f_calls > Nmax)
+				return P[min];
 
-		Xopt = P[min];
-
-		return Xopt;
+		}
 
 	} catch (string ex_info) {
 		throw ("solution sym_NM(...):\n" + ex_info);
