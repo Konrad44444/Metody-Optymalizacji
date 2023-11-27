@@ -147,6 +147,7 @@
     <Text Include="rosen.txt" />
     <Text Include="Rosen_sim.txt" />
     <Text Include="symSM.txt" />
+    <Text Include="symSMReal.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

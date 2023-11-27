@@ -192,12 +192,10 @@ matrix ff3R(matrix x, matrix ud1, matrix ud2) {
 
 	for (int i = 0; i < n; i++) {
 		if (abs(Y[1](i, 2) - 50) < abs(Y[1](i50, 2) - 50)) {
-			// najblizej 50
 			i50 = i;
 		}
 
 		if (abs(Y[1](i, 2)) < abs(Y[1](i0, 2))) {
-			// najblizej 0
 			i0 = i;
 		}
 	}
@@ -209,11 +207,11 @@ matrix ff3R(matrix x, matrix ud1, matrix ud2) {
 	}
 
 	if (abs(x(1)) - 23 > 0) {
-		y = y + ud2(0) * pow(abs(x(1)) - 20, 2);
+		y = y + ud2(0) * pow(abs(x(1)) - 23, 2);
 	}
 
-	if (abs(Y[1](i50, 0) - 5) - 1 > 0) {
-		y = y + ud2(0) * pow(abs(Y[1](i50, 0) - 5) - 1, 2);
+	if (abs(Y[1](i50, 0) - 5) - 0.95 > 0) {
+		y = y + ud2(0) * pow(abs(Y[1](i50, 0) - 5) - 0.95, 2);
 	}
 
 	return y;
