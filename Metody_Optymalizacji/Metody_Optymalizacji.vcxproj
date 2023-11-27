@@ -146,6 +146,7 @@
     <Text Include="HJ_sim.txt" />
     <Text Include="rosen.txt" />
     <Text Include="Rosen_sim.txt" />
+    <Text Include="symSM.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

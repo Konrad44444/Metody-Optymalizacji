@@ -64,5 +64,8 @@
     <Text Include="Rosen_sim.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="symSM.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-#include"opt_alg.h"
+﻿#include"opt_alg.h"
 
 solution MC(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	try	{
@@ -347,7 +347,7 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 				}
 			}
 
-			// zmiana bazy kierunk�w
+			// zmiana bazy kierunków
 			if (change) {
 				matrix Q(n[0], n[0]), v(n[0], 1);
 				for (int i = 0; i < n[0]; ++i) {
@@ -400,11 +400,17 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 solution pen(matrix(*ff)(matrix, matrix, matrix), matrix x0, double c, double dc, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	
 	try {
-		solution Xopt;
-		//Tu wpisz kod funkcji
-
-		// c - parametr przez ktory poczatkowo mnozymy,  c = 1, dc > 1; c = 10, dc < 1
-		return Xopt;
+		double alpha = 1, beta = 0.5, gamma = 2, delta = 0.5, s = 0.5, C = c;
+		solution X(x0), X1;
+		while (true)
+		{
+			X1 = sym_NM(ff, X.x, s, alpha, beta, gamma, delta, epsilon, Nmax, ud1, C);
+			if (norm(X.x - X1.x) < epsilon || solution::f_calls > Nmax)
+				return X1;
+			C *= dc;
+			X = X1;
+		}
+		return X;
 	} catch (string ex_info) {
 		throw ("solution pen(...):\n" + ex_info);
 	}
@@ -414,103 +420,71 @@ solution sym_NM(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double
 	
 	try {
 
-		solution P0;
-		P0.x = x0;
-
-		int* n = get_size(x0);
-		int N = n[0] + 1; //wierzcholki sympleksu
-		solution* P = new solution[N];
-
-		matrix e(N, n[0]);
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < n[0]; j++) {
-				e(i, j) = 1;
-			}
+		int n = get_len(x0);
+		matrix D = ident_mat(n);
+		int N = n + 1;//liczba wierzcjo�k�w symlpeksu
+		solution* S = new solution[N];//sympleks
+		S[0].x = x0;
+		S[0].fit_fun(ff, ud1, ud2);
+		for (int i = 1; i < N; ++i)
+		{
+			S[i].x = S[0].x + s * D[i - 1];
+			S[i].fit_fun(ff, ud1, ud2);
 		}
-
-		int max = 0;
-		int min = 0;
-
-		solution Pcenter(0);
-		solution Podb;
-		solution Pe;
-		solution Pz;
-
-		double max_norm;
-
-		for (int i = 0; i < N; i++) {
-			P[i].x = P0.x + s * e[i];
-		}
-
-		while(true) {
-
-			for (int i = 0; i < N; i++) {
-				P[i].fit_fun(ff, ud1, ud2);
-			}
-
-			for (int i = 1; i < N; i++) {
-				if (P[i].y > P[max].y)
-					max = i;
-				if (P[i].y < P[min].y)
-					min = i;
-			}
-
-			if (min == max) break;
-
-			for (int i = 0; i < N; i++) {
-				if (i != max) {
-					Pcenter.x = Pcenter.x + P[i].x;
-				}
-			}
-			Pcenter.x = Pcenter.x / n[0];
-
-			Podb.x = Pcenter.x + alpha * (Pcenter.x - P[max].x);
-			
-			Podb.fit_fun(ff, ud1, ud2);
-			P[min].fit_fun(ff, ud1, ud2);
-			P[max].fit_fun(ff, ud1, ud2);
-
-			if (Podb.y < P[min].y) {
-
-				Pe.x = Pcenter.x + gamma * (Podb.x - Pcenter.x);
-				Pe.fit_fun(ff, ud1, ud2);
-				if (Pe.y < Podb.y)
-					P[max] = Pe;
-				else
-					P[max] = Podb;
-
-			}
-			else {
-
-				if (P[min].y <= Podb.y && Podb.y < P[max].y) {
-					P[max] = Podb;
-				}
-				else {
-
-					Pz.x = Pcenter.x + beta * (Podb.x - Pcenter.x);
-					Pz.fit_fun(ff);
-
-					if (Pz.y >= P[max].y) {
-
-						for (int i = 0; i < N; i++) {
-							if (i != min)
-								P[i].x = delta * (P[i].x + P[min].x);
-						}
-					}
-					else {
-						P[max] = Pz;
-					}
-				}
-			}
-
-			double max_s = norm(P[0].x - P[min].x);
-
+		solution PR, PE, PN;//reflection,expansion,zaw�enie
+		matrix pc;
+		int i_min, i_max;
+		while (true)
+		{
+			i_min = i_max = 0;
 			for (int i = 1; i < N; ++i)
-				if (max_s < norm(P[i].x - P[min].x))
-					max_s = norm(P[i].x - P[min].x);
-			if (max_s < epsilon || solution::f_calls > Nmax)
-				return P[min];
+			{
+				if (S[i_min].y > S[i].y)
+					i_min = i;
+				if (S[i_max].y < S[i].y)
+					i_max = i;
+			}
 
+			pc = matrix(n, 1);
+			for (int i = 0; i < N; ++i)
+				if (i != i_max)
+					pc = pc + S[i].x;
+			pc = pc / (N - 1);
+			PR.x = pc + alpha * (pc - S[i_max].x);
+			PR.fit_fun(ff, ud1, ud2);
+			if (S[i_min].y <= PR.y && PR.y < S[i_max].y)
+				S[i_max] = PR;
+			else if (PR.y < S[i_min].y)
+			{
+				PE.x = pc + gamma * (PR.y - pc);
+				PE.fit_fun(ff, ud1, ud2);
+				if (PR.y <= PE.y)
+					S[i_max] = PR;
+				else
+					S[i_max] = PE;
+			}
+			else
+			{
+				PN.x = pc + beta * (S[i_max].x - pc);
+				PN.fit_fun(ff, ud1, ud2);
+				if (PN.y < S[i_max].y)
+					S[i_max] = PN;
+				else
+				{
+					for (int i = 0; i < N; ++i)
+						if (i != i_min)
+						{
+							S[i].x = delta * (S[i].x + S[i_min].x);
+							S[i].fit_fun(ff, ud1, ud2);
+						}
+				}
+			}
+			double max_s = norm(S[0].x - S[i_min].x);
+			for (int i = 1; i < N; ++i)
+				if (max_s < norm(S[i].x - S[i_min].x))
+					max_s = norm(S[i].x - S[i_min].x);
+			if (max_s < epsilon || solution::f_calls > Nmax)
+				return S[i_min];
 		}
 
 	} catch (string ex_info) {
