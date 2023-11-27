@@ -1,4 +1,4 @@
-#include"opt_alg.h"
+﻿#include"opt_alg.h"
 
 solution MC(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	try	{
@@ -347,7 +347,7 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 				}
 			}
 
-			// zmiana bazy kierunk�w
+			// zmiana bazy kierunków
 			if (change) {
 				matrix Q(n[0], n[0]), v(n[0], 1);
 				for (int i = 0; i < n[0]; ++i) {
@@ -400,11 +400,17 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 solution pen(matrix(*ff)(matrix, matrix, matrix), matrix x0, double c, double dc, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	
 	try {
-		solution Xopt;
-		//Tu wpisz kod funkcji
-
-		// c - parametr przez ktory poczatkowo mnozymy,  c = 1, dc > 1; c = 10, dc < 1
-		return Xopt;
+		double alpha = 1, beta = 0.5, gamma = 2, delta = 0.5, s = 0.5, C = c;
+		solution X(x0), X1;
+		while (true)
+		{
+			X1 = sym_NM(ff, X.x, s, alpha, beta, gamma, delta, epsilon, Nmax, ud1, C);
+			if (norm(X.x - X1.x) < epsilon || solution::f_calls > Nmax)
+				return X1;
+			C *= dc;
+			X = X1;
+		}
+		return X;
 	} catch (string ex_info) {
 		throw ("solution pen(...):\n" + ex_info);
 	}
@@ -414,103 +420,72 @@ solution sym_NM(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double
 	
 	try {
 
-		solution Xopt;
-		solution P0;
-		P0.x = x0;
-
-		int* n = get_size(x0);
-		solution* P = new solution[n[0]];
-		double e = 2.7182818285;
-
-		int max = 0;
-		int min = 0;
-
-		solution Pcenter(0);
-		solution Podb;
-		solution Pe;
-		solution Pz;
-
-		double max_norm;
-
-		for (int i = 0; i < n[0]; i++) {
-			P[i].x(0) = P0.x(0) + s * pow(e, i);
+		int n = get_len(x0);
+		matrix D = ident_mat(n);
+		int N = n + 1;//liczba wierzcjo�k�w symlpeksu
+		solution* S = new solution[N];//sympleks
+		S[0].x = x0;
+		S[0].fit_fun(ff, ud1, ud2);
+		for (int i = 1; i < N; ++i)
+		{
+			S[i].x = S[0].x + s * D[i - 1];
+			S[i].fit_fun(ff, ud1, ud2);
 		}
-
-		do {
-			for (int i = 0; i < n[0]; i++) {
-				P[i].fit_fun(ff);
+		solution PR, PE, PN;//reflection,expansion,zaw�enie
+		matrix pc;
+		int i_min, i_max;
+		while (true)
+		{
+			i_min = i_max = 0;
+			for (int i = 1; i < N; ++i)
+			{
+				if (S[i_min].y > S[i].y)
+					i_min = i;
+				if (S[i_max].y < S[i].y)
+					i_max = i;
 			}
 
-			for (int i = 1; i < n[0]; i++) {
-				if (P[i].y(0) > P[max].y(0))
-					max = i;
-				if (P[i].y(0) < P[min].y(0))
-					min = i;
-			}
-			if (min == max) break;
-
-			for (int i = 0; i < n[0]; i++) {
-				if (i != max) {
-					Pcenter.x(0) += P[i].x(0);
-				}
-			}
-			Pcenter.x(0) /= n[0];
-
-			Podb.x(0) = Pcenter.x(0) + alpha * (Pcenter.x(0) - P[max].x(0));
-			
-			Podb.fit_fun(ff);
-			P[min].fit_fun(ff);
-			P[max].fit_fun(ff);
-
-			if (Podb.y(0) < P[min].y(0)) {
-
-				Pe.x(0) = Pcenter.x(0) + gamma * (Podb.x(0) - Pcenter.x(0));
-				Pe.fit_fun(ff);
-				if (Pe.y(0) < Podb.y(0))
-					P[max] = Pe;
+			pc = matrix(n, 1);
+			for (int i = 0; i < N; ++i)
+				if (i != i_max)
+					pc = pc + S[i].x;
+			pc = pc / (N - 1);
+			PR.x = pc + alpha * (pc - S[i_max].x);
+			PR.fit_fun(ff, ud1, ud2);
+			if (S[i_min].y <= PR.y && PR.y < S[i_max].y)
+				S[i_max] = PR;
+			else if (PR.y < S[i_min].y)
+			{
+				PE.x = pc + gamma * (PR.y - pc);
+				PE.fit_fun(ff, ud1, ud2);
+				if (PR.y <= PE.y)
+					S[i_max] = PR;
 				else
-					P[max] = Podb;
-
+					S[i_max] = PE;
 			}
-			else {
-
-				if (P[min].y(0) <= Podb.y(0) && Podb.y(0) < P[max].y(0)) {
-					P[max] = Podb;
-				}
-				else {
-
-					Pz.x(0) = Pcenter.x(0) + beta * (Podb.x(0) - Pcenter.x(0));
-					Pz.fit_fun(ff);
-
-					if (Pz.y(0) >= P[max].y(0)) {
-
-						for (int i = 0; i < n[0]; i++) {
-							if (i != min)
-								P[i].x(0) = delta * (P[i].x(0) + P[min].x(0));
+			else
+			{
+				PN.x = pc + beta * (S[i_max].x - pc);
+				PN.fit_fun(ff, ud1, ud2);
+				if (PN.y < S[i_max].y)
+					S[i_max] = PN;
+				else
+				{
+					for (int i = 0; i < N; ++i)
+						if (i != i_min)
+						{
+							S[i].x = delta * (S[i].x + S[i_min].x);
+							S[i].fit_fun(ff, ud1, ud2);
 						}
-					}
-					else {
-						P[max] = Pz;
-					}
 				}
 			}
-
-			if (solution::f_calls > Nmax) break;
-			
-			max_norm = 0.0;
-			for (int i = 0; i < n[0]; i++) {
-				double norm = pow(P[min].x(0) - P[i].x(0), 2);
-				if (norm > max_norm) {
-					max_norm = norm;
-				}
-			}
-			max_norm = sqrt(max_norm);
-
-		} while (max_norm >= epsilon);
-
-		Xopt = P[min];
-
-		return Xopt;
+			double max_s = norm(S[0].x - S[i_min].x);
+			for (int i = 1; i < N; ++i)
+				if (max_s < norm(S[i].x - S[i_min].x))
+					max_s = norm(S[i].x - S[i_min].x);
+			if (max_s < epsilon || solution::f_calls > Nmax)
+				return S[i_min];
+		}
 
 	} catch (string ex_info) {
 		throw ("solution sym_NM(...):\n" + ex_info);

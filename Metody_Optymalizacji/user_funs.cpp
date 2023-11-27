@@ -112,6 +112,7 @@ matrix ff2R(matrix x, matrix ud1, matrix ud2) {
 }
 
 matrix f3_zewn(matrix x, matrix ud1, matrix ud2) {
+
 	matrix y;
 
 	y = (sin(M_PI * sqrt(pow(x(0) / M_PI, 2) + pow(x(1) / M_PI, 2))) / (M_PI * sqrt(pow(x(0) / M_PI, 2) + pow(x(1) / M_PI, 2))));
@@ -129,6 +130,7 @@ matrix f3_zewn(matrix x, matrix ud1, matrix ud2) {
 	}
 
 	return y;
+
 }
 
 matrix f3_wewn(matrix x, matrix ud1, matrix ud2) {
@@ -154,6 +156,62 @@ matrix f3_wewn(matrix x, matrix ud1, matrix ud2) {
 		y = 1e10;
 	} else {
 		y = y - ud2 / (norm(x) - ud1);
+	}
+
+	return y;
+}
+
+matrix df3(double x, matrix Y, matrix ud1, matrix ud2) {
+	double m = 0.6, r = 0.12, y0 = 100;
+	double g = 9.81, C = 0.47, ro = 1.2, S = M_PI * r * r, omega = ud1(0);
+
+	double dX = 0.5 * C * ro * S * Y(1) * Y(1);
+	double dY = 0.5 * C * ro * S * Y(3) * Y(3);
+	double FMx = M_PI * ro * Y(3) * omega * r * r * r;
+	double FMy = M_PI * ro * Y(1) * omega * r * r * r;
+
+	matrix DY(4, 1);
+	DY(0) = Y(1);
+	DY(1) = (-dX - FMx) / m;
+	DY(2) = Y(3);
+	DY(3) = (-m * g - dY - FMy) / m;
+
+	return DY;
+}
+
+matrix ff3R(matrix x, matrix ud1, matrix ud2) {
+	double T0 = 0, dT = 0.01, Tend = 7;
+
+	matrix Y0(4, new double[4] {0, x(0), 100, 0});
+	matrix X1 = x(1);
+	matrix* Y = solve_ode(df3, T0, dT, Tend, Y0, X1);
+
+	int n = get_len(Y[0]);
+	int i50 = 0;
+	int i0 = 0;
+
+	for (int i = 0; i < n; i++) {
+		if (abs(Y[1](i, 2) - 50) < abs(Y[1](i50, 2) - 50)) {
+			i50 = i;
+		}
+
+		if (abs(Y[1](i, 2)) < abs(Y[1](i0, 2))) {
+			i0 = i;
+		}
+	}
+
+	matrix y = -Y[1](i0, 0);
+
+	if (abs(x(0)) - 10 > 0) {
+		y = y + ud2(0) * pow(abs(x(0)) - 10, 2);
+	}
+
+	if (abs(x(1)) - 23 > 0) {
+		y = y + ud2(0) * pow(abs(x(1)) - 23, 2);
+	}
+
+	if (abs(Y[1](i50, 0) - 5) - 0.95 > 0) {
+		y = y + ud2(0) * pow(abs(Y[1](i50, 0) - 5) - 0.95, 2);
 	}
 
 	return y;

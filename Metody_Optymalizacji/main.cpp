@@ -27,7 +27,7 @@ int main() {
 	// algorytmy s¹ w opt_alg.cpp
 	
 	try {
-		lab2();
+		lab3();
 	} catch (string EX_INFO) {
 		cerr << "ERROR:\n";
 		cerr << EX_INFO << endl << endl;
@@ -264,6 +264,79 @@ void lab2() {
 }
 
 void lab3() {
+
+	//double epsilon = 1e-5;
+	//int Nmax = 100000;
+	//double c = 1;
+	//double dc_zew = 1.75, dc_wew = 0.75;
+	//double _a[3] = { 4, 4.4934, 5 };
+
+	//fstream file;
+	//file.open("symSM.txt");
+
+	//if (file.good()) {
+	//	for (int i = 0; i < 3; i++) {
+
+	//		matrix a(1, 1, _a[i]);
+
+	//		for (int j = 0; j < 100; j++) {
+
+	//			matrix x0 = rand_mat(2, 1) + 1; // 1 - 2
+	//			file << x0(0) << ";" << x0(1) << ";";
+
+	//			solution zew = pen(f3_zewn, x0, c, dc_zew, epsilon, Nmax, a, NULL);
+	//			double r = sqrt(pow(zew.x(0), 2) + pow(zew.x(1), 2));
+	//			file << zew.x(0) << ";" << zew.x(1) << ";" << r << ";" << zew.y << ";" << zew.f_calls << ";";
+	//			solution::clear_calls();
+	//			solution wew = pen(f3_wewn, x0, c, dc_wew, epsilon, Nmax, a, NULL);
+	//			r = sqrt(pow(wew.x(0), 2) + pow(wew.x(1), 2));
+	//			file << wew.x(0) << ";" << wew.x(1) << ";" << r << ";" << wew.y << ";" << wew.f_calls << "\n";
+	//			solution::clear_calls();
+
+	//		}
+
+	//	}
+	//}
+
+	//file.close();
+
+	//std::cout << "KONIEC!";
+
+	//random_device R;
+
+	//double v0 = 20.0 * ((double) R() / R.max()) - 10.0; // [-10, 10]
+	//double omega = 46.0 * ((double) R() / R.max()) - 23.0; // [-23, 23]
+
+	//std::cout << "v0: " << v0 << "; omega: " << omega << "\n";
+
+	//matrix x0(2, 1);
+	//x0(0) = v0;
+	//x0(1) = omega;
+
+	//double c = 5, dc = 2;
+	//double epsilon = 1e-5;
+	//int Nmax = 10000;
+
+	//solution symulacja = pen(ff3R, x0, c, dc, epsilon, Nmax);
+
+	//std::cout << symulacja << "\n";
+
+	double v = 1.27632;
+	double omega = 7.0789;
+
+	matrix Y0(4, new double[4] { 0, v, 100, 0 });
+
+	matrix* sym = solve_ode(df3, 0, 0.01, 7, Y0, omega);
+
+	fstream file;
+
+	file.open("symSMReal.txt");
+
+	if (file.good()) {
+		file << sym[1];
+	}
+
+	file.close();
 
 }
 
