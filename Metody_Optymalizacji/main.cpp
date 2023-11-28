@@ -302,31 +302,32 @@ void lab3() {
 
 	//std::cout << "KONIEC!";
 
-	//random_device R;
+	random_device R;
 
-	//double v0 = 20.0 * ((double) R() / R.max()) - 10.0; // [-10, 10]
-	//double omega = 46.0 * ((double) R() / R.max()) - 23.0; // [-23, 23]
+	double v0 = 20.0 * ((double) R() / R.max()) - 10.0; // [-10, 10]
+	double omega = 46.0 * ((double) R() / R.max()) - 23.0; // [-23, 23]
 
-	//std::cout << "v0: " << v0 << "; omega: " << omega << "\n";
+	std::cout << "v0: " << v0 << "; omega: " << omega << "\n";
 
-	//matrix x0(2, 1);
-	//x0(0) = v0;
-	//x0(1) = omega;
+	matrix x0(2, 1);
+	x0(0) = v0;
+	x0(1) = omega;
 
-	//double c = 5, dc = 2;
-	//double epsilon = 1e-5;
-	//int Nmax = 10000;
+	double c = 10, dc = 2;
+	double epsilon = 1e-5;
+	int Nmax = 10000;
 
-	//solution symulacja = pen(ff3R, x0, c, dc, epsilon, Nmax);
+	solution symulacja = pen(ff3R, x0, c, dc, epsilon, Nmax);
 
-	//std::cout << symulacja << "\n";
+	std::cout << "Koniec symulacji\n";
+	std::cout << symulacja << "\n";
 
-	double v = 1.27632;
-	double omega = 7.0789;
+	double v_ = symulacja.x(0);
+	double omega_ = symulacja.x(1);
 
-	matrix Y0(4, new double[4] { 0, v, 100, 0 });
+	matrix Y0(4, new double[4] { 0, v_, 100, 0 });
 
-	matrix* sym = solve_ode(df3, 0, 0.01, 7, Y0, omega);
+	matrix* sym = solve_ode(df3, 0, 0.01, 7, Y0, omega_);
 
 	fstream file;
 
@@ -337,7 +338,7 @@ void lab3() {
 	}
 
 	file.close();
-
+	std::cout << "Koniec zapisu\n";
 }
 
 void lab4() {
