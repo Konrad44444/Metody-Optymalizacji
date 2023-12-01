@@ -216,3 +216,26 @@ matrix ff3R(matrix x, matrix ud1, matrix ud2) {
 
 	return y;
 }
+
+matrix f4(matrix x, matrix ud1, matrix ud2)
+{
+	return pow(x(0) + 2 * x(1) - 7, 2) + pow(2 * x(0) + x(1) - 5, 2);
+}
+
+matrix f4_grad(matrix x, matrix ud1, matrix ud2)
+{
+	matrix g(2, 1);
+	g(0) = 10 * x(0) + 8 * x(1) - 34;
+	g(1) = 8 * x(0) + 10 * x(1) - 38;
+	return g;
+}
+
+matrix f4_hess(matrix x, matrix ud1, matrix ud2)
+{
+	matrix h(2, 2);
+	h(0, 0) = 10;
+	h(0, 1) = 8;
+	h(1, 0) = 8;
+	h(1, 1) = 10;
+	return h;
+}

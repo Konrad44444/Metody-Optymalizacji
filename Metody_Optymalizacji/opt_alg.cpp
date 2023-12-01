@@ -492,24 +492,88 @@ solution sym_NM(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double
 	}
 }
 
+// najszybszy spadek
 solution SD(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, matrix), matrix x0, double h0, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	
 	try {
-		solution Xopt;
 		//Tu wpisz kod funkcji
+		int n = get_len(x0);
+		
+		solution X, X1;
+		X.x = x0;
 
-		return Xopt;
+		matrix d(n, 1), P(n, 2), limits = ud1;
+		solution h;
+		double b;
+
+		while (true) {
+			X.grad(gf, ud1, ud2);
+			d = -X.g;
+			P.set_col(X.x, 0);
+			P.set_col(d, 1);
+
+			if (h0 < 0) {
+				b = compute_b(X.x, d, limits);
+				h = golden(ff, 0, b, epsilon, Nmax, P);
+				X1.x = X.x + h.x * d;
+			}
+			else {
+				X1.x = X.x + h0 * d;
+			}
+			
+			if (norm(X1.x - X.x) < epsilon || solution::f_calls + solution::g_calls > Nmax) {
+				X1.fit_fun(ff, ud1, ud2);
+				return X1;
+			}
+
+			X = X1;
+			
+		}
 	
 	} catch (string ex_info) {
 		throw ("solution SD(...):\n" + ex_info);
 	}
 }
 
+// gradienty sprzężone
 solution CG(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, matrix), matrix x0, double h0, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	
 	try {
 		solution Xopt;
 		//Tu wpisz kod funkcji
+
+		int n = get_len(x0);
+		solution X, X1;
+		X.x = x0;
+		matrix d(n, 1), P(n, 2), limits = ud1;
+		solution h;
+		double b, beta;
+		X.grad(gf, ud1, ud2);
+		d = -X.g;
+
+		while (true) {
+			P.set_col(X.x, 0);
+			P.set_col(d, 1);
+
+			if (h0 < 0) {
+				b = compute_b(X.x, d, limits);
+				h = golden(ff, 0, b, epsilon, Nmax, P);
+				X1.x = X.x + h.x * d;
+			}
+			else {
+				X1.x = X.x + h0 * d;
+			}
+
+			if (norm(X1.x - X.x) < epsilon || solution::f_calls + solution::g_calls > Nmax || norm(X1.g) < epsilon) {
+				X1.fit_fun(ff, ud1, ud2);
+				return X1;
+			}
+
+			X1.grad(gf, ud1, ud2);
+			beta = pow(norm(X1.g), 2) / pow(norm(X.g), 2);
+			d = -X1.g + beta * d;
+			X = X1;
+		}
 
 		return Xopt;
 	
@@ -518,12 +582,43 @@ solution CG(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 	}
 }
 
+// metoda Newtona
 solution Newton(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, matrix),
 	matrix(*Hf)(matrix, matrix, matrix), matrix x0, double h0, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	
 	try {
 		solution Xopt;
 		//Tu wpisz kod funkcji
+		int n = get_len(x0);
+		solution X, X1;
+		X.x = x0;
+		matrix d(n, 1), P(n, 2), limits = ud1;
+		solution h;
+		double b;
+
+		while (true) {
+			X.grad(gf, ud1, ud2);
+			X.hess(Hf, ud1, ud2);
+			d = -inv(X.H) * X.g;
+			P.set_col(X.x, 0);
+			P.set_col(d, 1);
+
+			if (h0 < 0) {
+				b = compute_b(X.x, d, limits);
+				h = golden(ff, 0, b, epsilon, Nmax, P);
+				X1.x = X.x + h.x * d;
+			}
+			else {
+				X1.x = X.x + d;
+			}
+
+			if (norm(X1.x - X.x) < epsilon || (solution::f_calls + solution::g_calls) > Nmax ||	norm(X1.g) < epsilon ||	det(X1.H) == 0)	{
+				X1.fit_fun(ff, ud1, ud2);
+				return X1;
+			}
+
+			X = X1;
+		}
 
 		return Xopt;
 	
@@ -537,6 +632,36 @@ solution golden(matrix(*ff)(matrix, matrix, matrix), double a, double b, double 
 	try {
 		solution Xopt;
 		//Tu wpisz kod funkcji
+		int n = get_len(ud1);
+		double alpha = (sqrt(5) - 1) / 2;
+		solution A, B, C, D;
+		A.x = a;
+		B.x = b;
+		C.x = B.x - alpha * (B.x - A.x);
+		C.fit_fun(ff, ud1, ud2);
+		D.x = A.x + alpha * (B.x - A.x);
+		D.fit_fun(ff, ud1, ud2);
+
+		while (true) {
+			if (C.y < D.y) {
+				B = D;
+				D = C;
+				C.x = B.x - alpha * (B.x - A.x);
+				C.fit_fun(ff, ud1, ud2);
+			}
+			else {
+				A = C;
+				C = D;
+				D.x = A.x + alpha * (B.x - A.x);
+				D.fit_fun(ff, ud1, ud2);
+			}
+
+			if ((B.x - A.x) < epsilon || solution::f_calls > Nmax) {
+				A.x = (A.x + B.x) / 2.0;
+				A.fit_fun(ff, ud1, ud2);
+				return A;
+			}
+		}
 
 		return Xopt;
 	
@@ -568,4 +693,22 @@ solution EA(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, in
 	} catch (string ex_info) {
 		throw ("solution EA(...):\n" + ex_info);
 	}
+}
+
+double compute_b(matrix x, matrix d, matrix limits)
+{
+	int* n = get_size(x);
+	double b = 1e9, bi;
+	for (int i = 0; i < n[0]; ++i)
+	{
+		if (d(i) == 0)
+			bi = 1e9;
+		else if (d(i) > 0)
+			bi = (limits(i, 1) - x(i)) / d(i);
+		else
+			bi = (limits(i, 0) - x(i)) / d(i);
+		if (b > bi)
+			b = bi;
+	}
+	return b;
 }

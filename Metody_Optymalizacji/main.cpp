@@ -27,7 +27,7 @@ int main() {
 	// algorytmy s¹ w opt_alg.cpp
 	
 	try {
-		lab3();
+		lab4();
 	} catch (string EX_INFO) {
 		cerr << "ERROR:\n";
 		cerr << EX_INFO << endl << endl;
@@ -342,7 +342,34 @@ void lab3() {
 }
 
 void lab4() {
+	random_device R;
 
+	double x1 = 20.0 * R() / R.max() - 10.0; //[-10, 10]
+	double x2 = 20.0 * R() / R.max() - 10.0; //[-10, 10]
+	std::cout << "x1: " << x1 << ", x2: " << x2 << "\n";
+
+	int Nmax = 10000;
+	double epsilon = 1e-3;
+	double h1 = 0.05, h2 = 0.12;
+	matrix x0(2, new double[2] {x1, x2});
+
+	matrix P = matrix(2, 2); // macierz do ograniczenia
+	P(0, 0) = -10;
+	P(0, 1) = 10;
+	P(1, 0) = -10;
+	P(1, 1) = 10;
+
+	solution::clear_calls();
+	solution sd = SD(f4, f4_grad, x0, h1, epsilon, Nmax, P);
+	std::cout << "SD: \n" << sd << "\n";
+
+	solution::clear_calls();
+	solution cg = CG(f4, f4_grad, x0, h1, epsilon, Nmax, P);
+	std::cout << "CG: \n" << cg << "\n";
+
+	solution::clear_calls();
+	solution newton = Newton(f4, f4_grad, f4_hess, x0, h1, epsilon, Nmax, P);
+	std::cout << "Newton: \n" << newton << "\n";
 }
 
 void lab5() {
