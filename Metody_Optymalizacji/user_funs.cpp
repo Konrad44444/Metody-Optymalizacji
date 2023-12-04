@@ -246,3 +246,8 @@ matrix f4_hess(matrix x, matrix ud1, matrix ud2)
 	h(1, 1) = 10;
 	return h;
 }
+
+matrix f4_h(matrix x, matrix ud1, matrix ud2)
+{
+	return pow(ud1(0,0)-ud1(1,0)*x(0), 2) + pow(ud1(0,1) - ud1(1,1) * x(0), 2);
+}

@@ -503,18 +503,21 @@ solution SD(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 		X.x = x0;
 
 		matrix d(n, 1), P(n, 2), limits = ud1;
-		solution h;
+		solution h(h0);
 		double b;
 
+		X.grad(gf, ud1, ud2);
+		d = -X.g;
+
 		while (true) {
-			X.grad(gf, ud1, ud2);
-			d = -X.g;
+			
 			P.set_col(X.x, 0);
 			P.set_col(d, 1);
 
 			if (h0 < 0) {
 				b = compute_b(X.x, d, limits);
-				h = golden(ff, 0, b, epsilon, Nmax, ud1, P);
+				//double* ab = expansion(f4_h, 0, 0.00001, 1.5, Nmax, P);
+				h = golden(f4_h, 0, b, epsilon, Nmax, P);
 				X1.x = X.x + h.x * d;
 			}
 			else {
@@ -526,6 +529,8 @@ solution SD(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 				return X1;
 			}
 
+			X1.grad(gf, ud1, ud2);
+			d = -X1.g;
 			X = X1;
 			
 		}
@@ -557,7 +562,8 @@ solution CG(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 
 			if (h0 < 0) {
 				b = compute_b(X.x, d, limits);
-				h = golden(ff, 0, b, epsilon, Nmax, ud1, P);
+				//double* ab = expansion(f4_h, 0, 0.00001, 1.5, Nmax, P);
+				h = golden(f4_h, 0, b, epsilon, Nmax, P);
 				X1.x = X.x + h.x * d;
 			}
 			else {
@@ -605,11 +611,12 @@ solution Newton(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix,
 
 			if (h0 < 0) {
 				b = compute_b(X.x, d, limits);
-				h = golden(ff, 0, b, epsilon, Nmax, ud1, P);
+				//double* ab = expansion(f4_h, 0, 0.00001, 1.5, Nmax, P);
+				h = golden(f4_h, 0, b, epsilon, Nmax, P);
 				X1.x = X.x + h.x * d;
 			}
 			else {
-				X1.x = X.x + d;
+				X1.x = X.x + h0 * d;
 			}
 
 			if (norm(X1.x - X.x) < epsilon || (solution::f_calls + solution::g_calls) > Nmax ||	norm(X1.g) < epsilon ||	det(X1.H) == 0)	{
@@ -630,29 +637,23 @@ solution Newton(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix,
 solution golden(matrix(*ff)(matrix, matrix, matrix), double a, double b, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	
 	try {
-		solution Xopt;
-		//Tu wpisz kod funkcji
+
 		double alpha = (sqrt(5) - 1) / 2;
+
 		solution A, B, C, D;
 
-		matrix AB(2, 1);
-		AB(0) = a;
-		AB(1) = b;
 		A.x = a;
 		B.x = b;
 
-		matrix CD(2, 1);
-		CD(0) = AB(1) - alpha * (AB(1) - AB(0));
-		CD(1) = AB(0) + alpha * (AB(1) - AB(0));
-
-		C.x = CD(0);
+		C.x = B.x - alpha * (B.x - A.x);
 		C.fit_fun(ff, ud1, ud2);
-		D.x = CD(1);
+
+		D.x = A.x + alpha * (B.x - A.x);
 		D.fit_fun(ff, ud1, ud2);
 
 		while (true) {
 			if (C.y < D.y) {
-				AB = D.x;
+				B = D;
 				D = C;
 				C.x = B.x - alpha * (B.x - A.x);
 				C.fit_fun(ff, ud1, ud2);
@@ -670,8 +671,6 @@ solution golden(matrix(*ff)(matrix, matrix, matrix), double a, double b, double 
 				return A;
 			}
 		}
-
-		return Xopt;
 	
 	} catch (string ex_info) {
 		throw ("solution golden(...):\n" + ex_info);

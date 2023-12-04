@@ -349,7 +349,7 @@ void lab4() {
 	std::cout << "x1: " << x1 << ", x2: " << x2 << "\n";
 
 	int Nmax = 10000;
-	double epsilon = 1e-3;
+	double epsilon = 1e-7;
 	// h > 0 - sta³y krok, h < 0 - zmienny krok
 	double h1 = 0.05, h2 = 0.12, h3 = -1;
 	matrix x0(2, new double[2] {x1, x2});

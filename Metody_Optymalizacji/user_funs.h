@@ -18,3 +18,4 @@ matrix ff3R(matrix x, matrix ud1, matrix ud2);
 matrix f4(matrix x1, matrix ud1 = NAN, matrix ud2 = NAN);
 matrix f4_grad(matrix x, matrix ud1 = NAN, matrix ud2 = NAN);
 matrix f4_hess(matrix x, matrix ud1 = NAN, matrix ud2 = NAN);
+matrix f4_h(matrix x, matrix ud1, matrix ud2 = NAN);
