@@ -514,7 +514,7 @@ solution SD(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 
 			if (h0 < 0) {
 				b = compute_b(X.x, d, limits);
-				h = golden(ff, 0, b, epsilon, Nmax, P);
+				h = golden(ff, 0, b, epsilon, Nmax, ud1, P);
 				X1.x = X.x + h.x * d;
 			}
 			else {
@@ -557,7 +557,7 @@ solution CG(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 
 			if (h0 < 0) {
 				b = compute_b(X.x, d, limits);
-				h = golden(ff, 0, b, epsilon, Nmax, P);
+				h = golden(ff, 0, b, epsilon, Nmax, ud1, P);
 				X1.x = X.x + h.x * d;
 			}
 			else {
@@ -605,7 +605,7 @@ solution Newton(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix,
 
 			if (h0 < 0) {
 				b = compute_b(X.x, d, limits);
-				h = golden(ff, 0, b, epsilon, Nmax, P);
+				h = golden(ff, 0, b, epsilon, Nmax, ud1, P);
 				X1.x = X.x + h.x * d;
 			}
 			else {
@@ -632,19 +632,27 @@ solution golden(matrix(*ff)(matrix, matrix, matrix), double a, double b, double 
 	try {
 		solution Xopt;
 		//Tu wpisz kod funkcji
-		int n = get_len(ud1);
 		double alpha = (sqrt(5) - 1) / 2;
 		solution A, B, C, D;
+
+		matrix AB(2, 1);
+		AB(0) = a;
+		AB(1) = b;
 		A.x = a;
 		B.x = b;
-		C.x = B.x - alpha * (B.x - A.x);
+
+		matrix CD(2, 1);
+		CD(0) = AB(1) - alpha * (AB(1) - AB(0));
+		CD(1) = AB(0) + alpha * (AB(1) - AB(0));
+
+		C.x = CD(0);
 		C.fit_fun(ff, ud1, ud2);
-		D.x = A.x + alpha * (B.x - A.x);
+		D.x = CD(1);
 		D.fit_fun(ff, ud1, ud2);
 
 		while (true) {
 			if (C.y < D.y) {
-				B = D;
+				AB = D.x;
 				D = C;
 				C.x = B.x - alpha * (B.x - A.x);
 				C.fit_fun(ff, ud1, ud2);

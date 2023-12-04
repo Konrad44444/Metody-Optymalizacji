@@ -350,25 +350,26 @@ void lab4() {
 
 	int Nmax = 10000;
 	double epsilon = 1e-3;
-	double h1 = 0.05, h2 = 0.12;
+	// h > 0 - sta³y krok, h < 0 - zmienny krok
+	double h1 = 0.05, h2 = 0.12, h3 = -1;
 	matrix x0(2, new double[2] {x1, x2});
 
 	matrix P = matrix(2, 2); // macierz do ograniczenia
-	P(0, 0) = -10;
+	P(0, 0) = x0(0);
 	P(0, 1) = 10;
-	P(1, 0) = -10;
+	P(1, 0) = x0(1);
 	P(1, 1) = 10;
 
 	solution::clear_calls();
-	solution sd = SD(f4, f4_grad, x0, h1, epsilon, Nmax, P);
+	solution sd = SD(f4, f4_grad, x0, h3, epsilon, Nmax, P);
 	std::cout << "SD: \n" << sd << "\n";
 
 	solution::clear_calls();
-	solution cg = CG(f4, f4_grad, x0, h1, epsilon, Nmax, P);
+	solution cg = CG(f4, f4_grad, x0, h3, epsilon, Nmax, P);
 	std::cout << "CG: \n" << cg << "\n";
 
 	solution::clear_calls();
-	solution newton = Newton(f4, f4_grad, f4_hess, x0, h1, epsilon, Nmax, P);
+	solution newton = Newton(f4, f4_grad, f4_hess, x0, h3, epsilon, Nmax, P);
 	std::cout << "Newton: \n" << newton << "\n";
 }
 

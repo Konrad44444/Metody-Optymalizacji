@@ -219,7 +219,14 @@ matrix ff3R(matrix x, matrix ud1, matrix ud2) {
 
 matrix f4(matrix x, matrix ud1, matrix ud2)
 {
-	return pow(x(0) + 2 * x(1) - 7, 2) + pow(2 * x(0) + x(1) - 5, 2);
+	matrix y;
+	if (isnan(ud2(0, 0))) {
+		y = pow(x(0) + 2 * x(1) - 7, 2) + pow(2 * x(0) + x(1) - 5, 2);
+	}
+	else {
+		y = f4(ud1(0) + x * ud2(1), ud1);
+	}
+	return y;
 }
 
 matrix f4_grad(matrix x, matrix ud1, matrix ud2)
