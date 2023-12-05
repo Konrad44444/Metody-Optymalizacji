@@ -251,16 +251,17 @@ matrix ff4R(matrix teta, matrix x, matrix y) {
 
 	matrix J;
 
-	int n = get_len(y);
+	int* n = get_size(y);
 	double suma = 0.0;
 
-	for (int i = 0; i < n; i++) {
-		suma += y(i) * log(h0(teta, x[i])) + (1 - y(i)) * log(1 - h0(teta, x[i]));
+	for (int i = 0; i < n[1]; i++) {
+		suma += y[i](0) * log(h0(teta, x[i])) + (1 - y[i](0)) * log(1 - h0(teta, x[i]));
 	}
 
-	suma *= -1 / n;
+	suma *= -1;
+	suma /= n[1];
 
-	J = suma;
+	J(0) = suma;
 
 	return J;
 }
@@ -269,23 +270,21 @@ matrix ff4R_grad(matrix teta, matrix x, matrix y) {
 
 	matrix J(3, 1);
 
-	int n = get_len(y);
+	int* n = get_size(y);
 
 	for (int j = 0; j < get_len(teta); j++) {
 		double suma = 0.0;
 
-		for (int i = 0; i < n; i++) {
-
-			suma += (h0(teta, x[i]) - y(i)) * x[i](j);
+		for (int i = 0; i < n[1]; i++) {
+			suma += (h0(teta, x[i]) - y[i](0)) * x[i](j);
 		}
 	
-		suma *= 1 / n;
+		suma /= n[1];
 
 		J(j) = suma;
 	}
 
-
-	return matrix();
+	return J;
 }
 
 double h0(matrix teta, matrix x) {	

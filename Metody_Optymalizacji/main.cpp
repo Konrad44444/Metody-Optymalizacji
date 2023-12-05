@@ -373,7 +373,7 @@ void lab4() {
 	int m = 100;
 	matrix teta(3, new double[3]{ 0, 0, 0 });
 	double h = 0.01;
-	double epsilon = 1e-5;
+	double epsilon = 1e-3;
 	int Nmax = 10000;
 	matrix X(3, m), Y(1, m);
 
@@ -383,27 +383,34 @@ void lab4() {
 
 	if (XData.good() && YData.good()) {
 		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < m; j++) {
-				string a;
-				string x;
-				XData >> std::stod(X[j](i));
-				XData >> a;
 
-				if (i == 0) {
-					YData >> Y[j](0);
-					YData >> a;
-				}
+			string x_line;
+			XData >> x_line;
+			stringstream ss(x_line);
+
+
+			for (int j = 0; j < m; j++) {
+				string x;
+				getline(ss, x, ';');
+				X(i, j) = std::stod(x);
 			}
 		}
 
+		string y_line;
+		YData >> y_line;
+		stringstream ss(y_line);
+
+
+		for (int j = 0; j < m; j++) {
+			string y;
+			getline(ss, y, ';');
+			Y(0, j) = std::stod(y);
+		}
 	}
 
-	std::cout << X << "\n";
-	std::cout << Y;
-
-	/*solution cg = CG(ff4R, ff4R_grad, teta, h, epsilon, Nmax, X, Y);
+	solution cg = CG(ff4R, ff4R_grad, teta, h, epsilon, Nmax, X, Y);
 	cg.fit_fun(f4);
-	std::cout << "CG: \n" << cg << "\n";*/
+	std::cout << "CG: \n" << cg << "\n";
 }
 
 void lab5() {

@@ -556,10 +556,10 @@ solution CG(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 		d = -X.g;
 
 		while (true) {
-			P.set_col(X.x, 0);
-			P.set_col(d, 1);
 
 			if (h0 < 0) {
+				P.set_col(X.x, 0);
+				P.set_col(d, 1);
 				double* ab = expansion(ff, 0, 0.00001, 1.5, Nmax, NAN, P);
 				h = golden(ff, ab[0], ab[1], epsilon, Nmax, NAN, P);
 				X1.x = X.x + h.x * d;
@@ -576,6 +576,8 @@ solution CG(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 			X1.grad(gf, ud1, ud2);
 			beta = pow(norm(X1.g), 2) / pow(norm(X.g), 2);
 			d = -X1.g + beta * d;
+			std::cout << X1.x << " " << X.x << "\n";
+			std::cout << X1.g << "\n";
 			X = X1;
 		}
 
