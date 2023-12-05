@@ -362,14 +362,17 @@ void lab4() {
 
 	solution::clear_calls();
 	solution sd = SD(f4, f4_grad, x0, h3, epsilon, Nmax, P);
+	sd.fit_fun(f4);
 	std::cout << "SD: \n" << sd << "\n";
 
 	solution::clear_calls();
 	solution cg = CG(f4, f4_grad, x0, h3, epsilon, Nmax, P);
+	cg.fit_fun(f4);
 	std::cout << "CG: \n" << cg << "\n";
 
 	solution::clear_calls();
 	solution newton = Newton(f4, f4_grad, f4_hess, x0, h3, epsilon, Nmax, P);
+	newton.fit_fun(f4);
 	std::cout << "Newton: \n" << newton << "\n";
 }
 

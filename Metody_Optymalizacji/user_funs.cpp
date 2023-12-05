@@ -224,7 +224,7 @@ matrix f4(matrix x, matrix ud1, matrix ud2)
 		y = pow(x(0) + 2 * x(1) - 7, 2) + pow(2 * x(0) + x(1) - 5, 2);
 	}
 	else {
-		y = f4(ud1(0) + x * ud2(1), ud1);
+		y = f4(ud2[0] + x * ud2[1], ud1);
 	}
 	return y;
 }
@@ -250,4 +250,14 @@ matrix f4_hess(matrix x, matrix ud1, matrix ud2)
 matrix f4_h(matrix x, matrix ud1, matrix ud2)
 {
 	return pow(ud1(0,0)-ud1(1,0)*x(0), 2) + pow(ud1(0,1) - ud1(1,1) * x(0), 2);
+}
+
+matrix df4(matrix x, matrix ud1, matrix ud2) {
+
+	return matrix();
+}
+
+matrix ff4R(matrix x, matrix ud1, matrix ud2) {
+
+	return matrix();
 }

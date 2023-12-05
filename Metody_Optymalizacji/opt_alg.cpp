@@ -515,9 +515,8 @@ solution SD(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 			P.set_col(d, 1);
 
 			if (h0 < 0) {
-				b = compute_b(X.x, d, limits);
-				//double* ab = expansion(f4_h, 0, 0.00001, 1.5, Nmax, P);
-				h = golden(f4_h, 0, b, epsilon, Nmax, P);
+				double* ab = expansion(ff, 0, 0.00001, 1.5, Nmax, NAN, P);
+				h = golden(ff, ab[0], ab[1], epsilon, Nmax, NAN, P);
 				X1.x = X.x + h.x * d;
 			}
 			else {
@@ -561,9 +560,8 @@ solution CG(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 			P.set_col(d, 1);
 
 			if (h0 < 0) {
-				b = compute_b(X.x, d, limits);
-				//double* ab = expansion(f4_h, 0, 0.00001, 1.5, Nmax, P);
-				h = golden(f4_h, 0, b, epsilon, Nmax, P);
+				double* ab = expansion(ff, 0, 0.00001, 1.5, Nmax, NAN, P);
+				h = golden(ff, ab[0], ab[1], epsilon, Nmax, NAN, P);
 				X1.x = X.x + h.x * d;
 			}
 			else {
@@ -610,9 +608,8 @@ solution Newton(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix,
 			P.set_col(d, 1);
 
 			if (h0 < 0) {
-				b = compute_b(X.x, d, limits);
-				//double* ab = expansion(f4_h, 0, 0.00001, 1.5, Nmax, P);
-				h = golden(f4_h, 0, b, epsilon, Nmax, P);
+				double* ab = expansion(ff, 0, 0.00001, 1.5, Nmax, NAN, P);
+				h = golden(ff, ab[0], ab[1], epsilon, Nmax, NAN, P);
 				X1.x = X.x + h.x * d;
 			}
 			else {
