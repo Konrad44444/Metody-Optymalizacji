@@ -342,38 +342,68 @@ void lab3() {
 }
 
 void lab4() {
-	random_device R;
+	//random_device R;
 
-	double x1 = 20.0 * R() / R.max() - 10.0; //[-10, 10]
-	double x2 = 20.0 * R() / R.max() - 10.0; //[-10, 10]
-	std::cout << "x1: " << x1 << ", x2: " << x2 << "\n";
+	//double x1 = 20.0 * R() / R.max() - 10.0; //[-10, 10]
+	//double x2 = 20.0 * R() / R.max() - 10.0; //[-10, 10]
+	//std::cout << "x1: " << x1 << ", x2: " << x2 << "\n";
 
+	//int Nmax = 10000;
+	//double epsilon = 1e-7;
+	//// h > 0 - sta³y krok, h < 0 - zmienny krok
+	//double h1 = 0.05, h2 = 0.12, h3 = -1;
+	//matrix x0(2, new double[2] {x1, x2});
+
+	//solution::clear_calls();
+	//solution sd = SD(f4, f4_grad, x0, h3, epsilon, Nmax);
+	//sd.fit_fun(f4);
+	//std::cout << "SD: \n" << sd << "\n";
+
+	//solution::clear_calls();
+	//solution cg = CG(f4, f4_grad, x0, h3, epsilon, Nmax);
+	//cg.fit_fun(f4);
+	//std::cout << "CG: \n" << cg << "\n";
+
+	//solution::clear_calls();
+	//solution newton = Newton(f4, f4_grad, f4_hess, x0, h3, epsilon, Nmax);
+	//newton.fit_fun(f4);
+	//std::cout << "Newton: \n" << newton << "\n";
+
+
+	int m = 100;
+	matrix teta(3, new double[3]{ 0, 0, 0 });
+	double h = 0.01;
+	double epsilon = 1e-5;
 	int Nmax = 10000;
-	double epsilon = 1e-7;
-	// h > 0 - sta³y krok, h < 0 - zmienny krok
-	double h1 = 0.05, h2 = 0.12, h3 = -1;
-	matrix x0(2, new double[2] {x1, x2});
+	matrix X(3, m), Y(1, m);
 
-	matrix P = matrix(2, 2); // macierz do ograniczenia
-	P(0, 0) = x0(0);
-	P(0, 1) = 10;
-	P(1, 0) = x0(1);
-	P(1, 1) = 10;
+	fstream XData, YData;
+	XData.open("XData.txt");
+	YData.open("YData.txt");
 
-	solution::clear_calls();
-	solution sd = SD(f4, f4_grad, x0, h3, epsilon, Nmax, P);
-	sd.fit_fun(f4);
-	std::cout << "SD: \n" << sd << "\n";
+	if (XData.good() && YData.good()) {
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < m; j++) {
+				string a;
+				string x;
+				XData >> std::stod(X[j](i));
+				XData >> a;
 
-	solution::clear_calls();
-	solution cg = CG(f4, f4_grad, x0, h3, epsilon, Nmax, P);
+				if (i == 0) {
+					YData >> Y[j](0);
+					YData >> a;
+				}
+			}
+		}
+
+	}
+
+	std::cout << X << "\n";
+	std::cout << Y;
+
+	/*solution cg = CG(ff4R, ff4R_grad, teta, h, epsilon, Nmax, X, Y);
 	cg.fit_fun(f4);
-	std::cout << "CG: \n" << cg << "\n";
-
-	solution::clear_calls();
-	solution newton = Newton(f4, f4_grad, f4_hess, x0, h3, epsilon, Nmax, P);
-	newton.fit_fun(f4);
-	std::cout << "Newton: \n" << newton << "\n";
+	std::cout << "CG: \n" << cg << "\n";*/
 }
 
 void lab5() {

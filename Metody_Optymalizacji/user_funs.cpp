@@ -247,17 +247,47 @@ matrix f4_hess(matrix x, matrix ud1, matrix ud2)
 	return h;
 }
 
-matrix f4_h(matrix x, matrix ud1, matrix ud2)
-{
-	return pow(ud1(0,0)-ud1(1,0)*x(0), 2) + pow(ud1(0,1) - ud1(1,1) * x(0), 2);
+matrix ff4R(matrix teta, matrix x, matrix y) {
+
+	matrix J;
+
+	int n = get_len(y);
+	double suma = 0.0;
+
+	for (int i = 0; i < n; i++) {
+		suma += y(i) * log(h0(teta, x[i])) + (1 - y(i)) * log(1 - h0(teta, x[i]));
+	}
+
+	suma *= -1 / n;
+
+	J = suma;
+
+	return J;
 }
 
-matrix df4(matrix x, matrix ud1, matrix ud2) {
+matrix ff4R_grad(matrix teta, matrix x, matrix y) {
+
+	matrix J(3, 1);
+
+	int n = get_len(y);
+
+	for (int j = 0; j < get_len(teta); j++) {
+		double suma = 0.0;
+
+		for (int i = 0; i < n; i++) {
+
+			suma += (h0(teta, x[i]) - y(i)) * x[i](j);
+		}
+	
+		suma *= 1 / n;
+
+		J(j) = suma;
+	}
+
 
 	return matrix();
 }
 
-matrix ff4R(matrix x, matrix ud1, matrix ud2) {
-
-	return matrix();
+double h0(matrix teta, matrix x) {	
+	return 1 / (1 + exp(m2d(-1 * trans(teta) * x)));
 }

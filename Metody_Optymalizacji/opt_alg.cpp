@@ -502,7 +502,7 @@ solution SD(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 		solution X, X1;
 		X.x = x0;
 
-		matrix d(n, 1), P(n, 2), limits = ud1;
+		matrix d(n, 1), P(n, 2);
 		solution h(h0);
 		double b;
 
@@ -549,7 +549,7 @@ solution CG(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 		int n = get_len(x0);
 		solution X, X1;
 		X.x = x0;
-		matrix d(n, 1), P(n, 2), limits = ud1;
+		matrix d(n, 1), P(n, 2);
 		solution h;
 		double b, beta;
 		X.grad(gf, ud1, ud2);
@@ -596,7 +596,7 @@ solution Newton(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix,
 		int n = get_len(x0);
 		solution X, X1;
 		X.x = x0;
-		matrix d(n, 1), P(n, 2), limits = ud1;
+		matrix d(n, 1), P(n, 2);
 		solution h;
 		double b;
 
@@ -697,22 +697,4 @@ solution EA(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, in
 	} catch (string ex_info) {
 		throw ("solution EA(...):\n" + ex_info);
 	}
-}
-
-double compute_b(matrix x, matrix d, matrix limits)
-{
-	int* n = get_size(x);
-	double b = 1e9, bi;
-	for (int i = 0; i < n[0]; ++i)
-	{
-		if (d(i) == 0)
-			bi = 1e9;
-		else if (d(i) > 0)
-			bi = (limits(i, 1) - x(i)) / d(i);
-		else
-			bi = (limits(i, 0) - x(i)) / d(i);
-		if (b > bi)
-			b = bi;
-	}
-	return b;
 }

@@ -70,5 +70,11 @@
     <Text Include="symSMReal.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="XData.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="YData.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
