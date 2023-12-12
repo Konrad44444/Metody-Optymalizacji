@@ -342,37 +342,48 @@ void lab3() {
 }
 
 void lab4() {
-	//random_device R;
 
-	//double x1 = 20.0 * R() / R.max() - 10.0; //[-10, 10]
-	//double x2 = 20.0 * R() / R.max() - 10.0; //[-10, 10]
-	//std::cout << "x1: " << x1 << ", x2: " << x2 << "\n";
+	//fstream file;
+	//file.open("symZAD4.txt");
 
+	//double* h = new double[3] { 0.05, 0.12, -1 };
 	//int Nmax = 10000;
 	//double epsilon = 1e-7;
-	//// h > 0 - sta³y krok, h < 0 - zmienny krok
-	//double h1 = 0.05, h2 = 0.12, h3 = -1;
-	//matrix x0(2, new double[2] {x1, x2});
 
-	//solution::clear_calls();
-	//solution sd = SD(f4, f4_grad, x0, h3, epsilon, Nmax);
-	//sd.fit_fun(f4);
-	//std::cout << "SD: \n" << sd << "\n";
+	//for (int i = 0; i < 3; i++) {
+	//
+	//	for (int j = 0; j < 1; j++) {
 
-	//solution::clear_calls();
-	//solution cg = CG(f4, f4_grad, x0, h3, epsilon, Nmax);
-	//cg.fit_fun(f4);
-	//std::cout << "CG: \n" << cg << "\n";
+	//		random_device R;
 
-	//solution::clear_calls();
-	//solution newton = Newton(f4, f4_grad, f4_hess, x0, h3, epsilon, Nmax);
-	//newton.fit_fun(f4);
-	//std::cout << "Newton: \n" << newton << "\n";
+	//		double x1 = 20.0 * R() / R.max() - 10.0; //[-10, 10]
+	//		double x2 = 20.0 * R() / R.max() - 10.0; //[-10, 10]
+	//		file << x1 << ";" << x2 << ";";
 
+	//		// h > 0 - sta³y krok, h < 0 - zmienny krok
+	//		matrix x0(2, new double[2]{ x1, x2 });
+
+	//		solution::clear_calls();
+	//		solution sd = SD(f4, f4_grad, x0, h[i], epsilon, Nmax);
+	//		sd.fit_fun(f4);
+	//		file << sd.x(0) << ";" << sd.x(1) << ";" << sd.y(0) << ";" << sd.f_calls << ";" << sd.g_calls << ";";
+
+	//		solution::clear_calls();
+	//		solution cg = CG(f4, f4_grad, x0, h[i], epsilon, Nmax);
+	//		cg.fit_fun(f4);
+	//		file << cg.x(0) << ";" << cg.x(1) << ";" << cg.y(0) << ";" << cg.f_calls << ";" << cg.g_calls << ";";
+
+	//		solution::clear_calls();
+	//		solution newton = Newton(f4, f4_grad, f4_hess, x0, h[i], epsilon, Nmax);
+	//		newton.fit_fun(f4);
+	//		file << newton.x(0) << ";" << newton.x(1) << ";" << newton.y(0) << ";" << newton.f_calls << ";" << newton.g_calls << ";" << newton.H_calls << "\n";
+
+	//	}
+	//}
 
 	int m = 100;
 	matrix teta(3, new double[3]{ 0, 0, 0 });
-	double h = 0.01;
+	double* h = new double[3]{ 0.01, 0.001, 0.0001 };
 	double epsilon = 1e-3;
 	int Nmax = 10000;
 	matrix X(3, m), Y(1, m);
@@ -408,9 +419,12 @@ void lab4() {
 		}
 	}
 
-	solution cg = CG(ff4R, ff4R_grad, teta, h, epsilon, Nmax, X, Y);
-	cg.fit_fun(f4);
-	std::cout << "CG: \n" << cg << "\n";
+	for (int i = 0; i < 3; i++) {
+		solution::clear_calls();
+		solution cg = CG(ff4R, ff4R_grad, teta, h[i], epsilon, Nmax, X, Y);
+		cg.fit_fun(f4);
+		std::cout << "CG: \n" << cg << "\n";
+	}
 }
 
 void lab5() {

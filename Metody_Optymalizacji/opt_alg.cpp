@@ -494,7 +494,8 @@ solution sym_NM(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double
 
 // najszybszy spadek
 solution SD(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, matrix), matrix x0, double h0, double epsilon, int Nmax, matrix ud1, matrix ud2) {
-	
+	//fstream file;
+	//file.open("SDh" + std::to_string(h0 * 100) + ".txt", fstream::out);
 	try {
 		//Tu wpisz kod funkcji
 		int n = get_len(x0);
@@ -532,16 +533,20 @@ solution SD(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 			d = -X1.g;
 			X = X1;
 			
+			//file << X.x(0) << ";" << X.x(1) << "\n";
 		}
 	
 	} catch (string ex_info) {
 		throw ("solution SD(...):\n" + ex_info);
 	}
+	//file.close();
 }
 
 // gradienty sprzężone
 solution CG(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, matrix), matrix x0, double h0, double epsilon, int Nmax, matrix ud1, matrix ud2) {
-	
+	//fstream file;
+	//file.open("CGh" + std::to_string(h0 * 100) + ".txt", fstream::out);
+
 	try {
 		solution Xopt;
 		//Tu wpisz kod funkcji
@@ -576,9 +581,11 @@ solution CG(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 			X1.grad(gf, ud1, ud2);
 			beta = pow(norm(X1.g), 2) / pow(norm(X.g), 2);
 			d = -X1.g + beta * d;
-			std::cout << X1.x << " " << X.x << "\n";
-			std::cout << X1.g << "\n";
+			//std::cout << X1.x << " " << X.x << "\n";
+			//std::cout << X1.g << "\n";
 			X = X1;
+
+			//file << X.x(0) << ";" << X.x(1) << "\n";
 		}
 
 		return Xopt;
@@ -586,12 +593,17 @@ solution CG(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 	} catch (string ex_info) {
 		throw ("solution CG(...):\n" + ex_info);
 	}
+
+	//file.close();
 }
 
 // metoda Newtona
 solution Newton(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, matrix),
 	matrix(*Hf)(matrix, matrix, matrix), matrix x0, double h0, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	
+	//fstream file;
+	//file.open("NEWTONh" + std::to_string(h0 * 100) + ".txt", fstream::out);
+
 	try {
 		solution Xopt;
 		//Tu wpisz kod funkcji
@@ -624,6 +636,8 @@ solution Newton(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix,
 			}
 
 			X = X1;
+
+			//file << X.x(0) << ";" << X.x(1) << "\n";
 		}
 
 		return Xopt;
@@ -631,6 +645,8 @@ solution Newton(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix,
 	} catch (string ex_info) {
 		throw ("solution Newton(...):\n" + ex_info);
 	}
+
+	//file.close();
 }
 
 solution golden(matrix(*ff)(matrix, matrix, matrix), double a, double b, double epsilon, int Nmax, matrix ud1, matrix ud2) {
