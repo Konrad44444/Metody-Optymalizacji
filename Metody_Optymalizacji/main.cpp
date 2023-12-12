@@ -384,8 +384,8 @@ void lab4() {
 	int m = 100;
 	matrix teta(3, new double[3]{ 0, 0, 0 });
 	double* h = new double[3]{ 0.01, 0.001, 0.0001 };
-	double epsilon = 1e-3;
-	int Nmax = 10000;
+	double epsilon = 1e-5;
+	int Nmax = 100000;
 	matrix X(3, m), Y(1, m);
 
 	fstream XData, YData;
@@ -419,7 +419,7 @@ void lab4() {
 		}
 	}
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 1; i++) {
 		solution::clear_calls();
 		solution cg = CG(ff4R, ff4R_grad, teta, h[i], epsilon, Nmax, X, Y);
 		cg.fit_fun(f4);

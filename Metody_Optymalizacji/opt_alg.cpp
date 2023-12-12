@@ -601,8 +601,8 @@ solution CG(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, mat
 solution Newton(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix, matrix),
 	matrix(*Hf)(matrix, matrix, matrix), matrix x0, double h0, double epsilon, int Nmax, matrix ud1, matrix ud2) {
 	
-	//fstream file;
-	//file.open("NEWTONh" + std::to_string(h0 * 100) + ".txt", fstream::out);
+	fstream file;
+	file.open("NEWTONh" + std::to_string(h0 * 100) + ".txt", fstream::out);
 
 	try {
 		solution Xopt;
@@ -637,7 +637,7 @@ solution Newton(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix,
 
 			X = X1;
 
-			//file << X.x(0) << ";" << X.x(1) << "\n";
+			file << X.x(0) << ";" << X.x(1) << "\n";
 		}
 
 		return Xopt;
@@ -646,7 +646,7 @@ solution Newton(matrix(*ff)(matrix, matrix, matrix), matrix(*gf)(matrix, matrix,
 		throw ("solution Newton(...):\n" + ex_info);
 	}
 
-	//file.close();
+	file.close();
 }
 
 solution golden(matrix(*ff)(matrix, matrix, matrix), double a, double b, double epsilon, int Nmax, matrix ud1, matrix ud2) {

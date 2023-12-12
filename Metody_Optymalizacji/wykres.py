@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 
 # Define the function
 def f(x, y):
-    return x**2 + y**2 - np.cos(2.5 * np.pi * x) - np.cos(2.5 * np.pi * y) + 2
+    return (x + 2*y -7) * (x + 2*y -7) + (2*x + y -5) * (2*x + y -5)
 
 # Generate x and y values
-x = np.linspace(-1, 1, 400)
-y = np.linspace(-1, 1, 400)
+x = np.linspace(-10, 10, 500)
+y = np.linspace(-10, 10, 500)
 X, Y = np.meshgrid(x, y)
 
 # Compute the function values for the grid points
@@ -26,18 +26,22 @@ plt.colorbar()
 # Add labels and title
 plt.xlabel('x1')
 plt.ylabel('x2')
-plt.title('$x1^2 + x2^2 - \cos(2.5\pi x1) - \cos(2.5\pi x2) + 2$\nCzerwony - HJ, Niebieski - Rosen')
+plt.title('Wykres 6\n$(x1 + 2*x2 -7)^2 + (2*x1 + x2 -5)^2$\nCzerwony - NEWTON 0,12, Niebieski - NEWTON, Zielony - NEWTON 0,05')
 
-with open('C:\\Users\\Konrad\\Desktop\\Metody_Optymalizacji\\Metody_Optymalizacji\\hj.txt', 'r') as file:
+with open('NEWTONh5.000000.txt', 'r') as file:
     for line in file:
         x, y = map(float, line.strip().split(';'))
-        plt.scatter(x, y, color='red', marker='o', s=15)
+        plt.scatter(x, y, color='green', marker='.', s=15, alpha=0.75)
+
+with open('NEWTONh12.000000.txt', 'r') as file:
+    for line in file:
+        x, y = map(float, line.strip().split(';'))
+        plt.scatter(x, y, color='red', marker='.', s=15, alpha=0.75)
         
-with open('C:\\Users\\Konrad\\Desktop\\Metody_Optymalizacji\\Metody_Optymalizacji\\rosen.txt', 'r') as file:
+with open('NEWTONh-100.000000.txt', 'r') as file:
     for line in file:
         x, y = map(float, line.strip().split(';'))
-        plt.scatter(x, y, color='blue', marker='o', s=15)
-
+        plt.scatter(x, y, color='blue', marker='.', s=15, alpha=0.75)
 
 # Show the plot
 plt.show()
