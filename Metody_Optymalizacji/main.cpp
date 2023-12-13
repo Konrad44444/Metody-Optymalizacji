@@ -27,7 +27,7 @@ int main() {
 	// algorytmy s¹ w opt_alg.cpp
 	
 	try {
-		lab4();
+		lab5();
 	} catch (string EX_INFO) {
 		cerr << "ERROR:\n";
 		cerr << EX_INFO << endl << endl;
@@ -428,6 +428,16 @@ void lab4() {
 }
 
 void lab5() {
+
+	int mi = 15;
+	int lamba = 5;
+	int N = 2;
+	matrix sigma0(2, new double[2] { 0.01, 0.01 });
+	double epsilon = 1e-5;
+	int Nmax = 100000;
+
+	solution result = EA(f5, N, NAN, NAN, mi, lamba, sigma0, epsilon, Nmax, NAN, NAN);
+	std::cout << result;
 
 }
 

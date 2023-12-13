@@ -21,3 +21,5 @@ matrix f4_hess(matrix x, matrix ud1 = NAN, matrix ud2 = NAN);
 matrix ff4R(matrix teta, matrix x, matrix y); 
 matrix ff4R_grad(matrix teta, matrix x, matrix y);
 double h0(matrix teta, matrix x);
+matrix f5(matrix x, matrix ud1 = NAN, matrix ud2 = NAN);
+void bubbleSort(double y[], int index[], int n);

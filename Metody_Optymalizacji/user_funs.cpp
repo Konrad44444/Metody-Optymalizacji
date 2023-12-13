@@ -290,3 +290,32 @@ matrix ff4R_grad(matrix teta, matrix x, matrix y) {
 double h0(matrix teta, matrix x) {	
 	return 1 / (1 + exp(m2d(-1 * trans(teta) * x)));
 }
+
+
+matrix f5(matrix x, matrix ud1, matrix ud2)
+{
+	matrix y;
+	
+	y = pow(x[0](0), 2) + pow(x[0](1), 2) - cos(2.5 * M_PI * x[0](0)) - cos(2.5 * M_PI * x[0](1)) + 2;
+
+	return y;
+}
+
+void bubbleSort(double y[], int index[], int n)
+{
+	int i, j;
+	bool swapped;
+	for (i = 0; i < n - 1; i++) {
+		swapped = false;
+		for (j = 0; j < n - i - 1; j++) {
+			if (y[j] > y[j + 1]) {
+				swap(y[j], y[j + 1]);
+				swap(index[j], index[j + 1]);
+				swapped = true;
+			}
+		}
+
+		if (swapped == false)
+			break;
+	}
+}

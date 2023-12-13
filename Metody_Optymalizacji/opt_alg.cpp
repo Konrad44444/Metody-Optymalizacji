@@ -708,7 +708,110 @@ solution EA(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, in
 	
 	try {
 		solution Xopt;
-		//Tu wpisz kod funkcji
+		
+		solution* P = new solution[mi + lambda];
+		solution* Pmin = new solution[mi];
+		random_device R;
+		
+		//Losowanie mi oraz sprawdzenie czy < epsilon
+		for (int i = 0; i < mi; i++) {
+			P[i].x = matrix(N, 2);
+			for (int j = 0; j < N; j++) {
+				double x = 10.0 * R() / R.max() - 5.0;
+				P[i].x(j, 0) = x;
+				P[i].x(j, 1) = sigma0(j);
+			}
+			P[i].fit_fun(ff);
+			if (P[i].y < epsilon) {
+				return P[i];
+			}
+		}
+
+		//Mutacja
+		while (true) {
+
+			//Losowanie lambda
+			double *mi_ff = new double[mi];
+			int *mi_ff_index = new int[mi];
+			long mianownik = 1;
+			for (int i = 0; i < mi; i++) {
+				mianownik *= (i + 1);
+				mi_ff[i] = P[i].y(0);
+				mi_ff_index[i] = i;
+			}
+
+			long licznik = 0;
+			for (int i = 0; i < mi; i++) {
+				licznik += (1. / (i + 1.)) * mianownik;
+			}
+
+			bubbleSort(mi_ff, mi_ff_index, mi);
+
+
+			for (int i = 0; i < lambda; i++) {
+				long random = (long)((double)licznik * R() / R.max() + 1.0);
+				long position = 0;
+				for (int j = 0; j < mi; j++) {
+					position += (1. / (j + 1.)) * mianownik;
+					if (random <= position) {
+						if (mi_ff_index[j] != -1) {
+							P[mi + i].x = P[mi_ff_index[j]].x;
+							mi_ff_index[j] = -1;
+							break;
+						}
+					}
+				}
+			}
+
+			//Mutacja
+			double alfa = 1/(pow(2*N,(1./2.)));
+			double beta = 1/(pow(4*N,(1./4.)));
+			for (int i = 0; i < lambda; i++) {
+				for (int j = 0; j < N; j++) {
+					double a = randn_mat()(0);
+					double b = randn_mat()(0);
+					P[mi + i].x(j, 1) *= exp(alfa*a+beta*b);
+					P[mi + i].x(j, 0) += a* P[mi + i].x(j, 1);
+				}
+			}
+
+			//Zamiana
+			for (int i = 0; i < lambda-1; i += 2)
+			{
+				double w = 1.0 * R() / R.max();
+				solution temp;
+				temp.x = P[mi + i].x;
+				P[mi + i].x = w * P[mi + i].x + (1.-w) * P[mi + i + 1].x;
+				P[mi + i + 1].x = w * P[mi + i + 1].x + (1.-w) * temp.x;
+			}
+
+			//Czy mniejsze od < epsilon
+			for (int i = 0; i < lambda; i++) {
+				P[mi + i].fit_fun(ff);
+				if (P[mi + i].y < epsilon) {
+					return P[mi + i];
+				}
+			}
+
+			//Zamiana najmniejszych
+			for (int i = 0; i < mi; ++i)
+			{
+				int j_min = 0;
+				for (int j = 1; j < mi + lambda; ++j)
+					if (P[j_min].y > P[j].y)
+						j_min = j;
+				Pmin[i] = P[j_min];
+				P[j_min].y = 1e10;
+			}
+			for (int i = 0; i < mi; ++i)
+				P[i] = Pmin[i];
+
+			if (solution::f_calls >= Nmax) {
+				return P[0];
+				break;
+			}
+
+		}
 
 		return Xopt;
 	
@@ -716,3 +819,5 @@ solution EA(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, in
 		throw ("solution EA(...):\n" + ex_info);
 	}
 }
+
+
