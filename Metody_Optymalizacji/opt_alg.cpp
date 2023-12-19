@@ -712,16 +712,23 @@ solution EA(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, in
 		solution* P = new solution[mi + lambda];
 		solution* Pmin = new solution[mi];
 		random_device R;
+		matrix IFF(mi, 1);
+		double s_IFF, r, s;
+
+		double uBand = m2d(ub - lb);
+		double lBand = m2d(lb);
+
+		std::cout << uBand << "\t" << lBand << "\n";
 		
 		//Losowanie mi oraz sprawdzenie czy < epsilon
 		for (int i = 0; i < mi; i++) {
 			P[i].x = matrix(N, 2);
 			for (int j = 0; j < N; j++) {
-				double x = 10.0 * R() / R.max() - 5.0;
+				double x = uBand * R() / R.max() + lBand;
 				P[i].x(j, 0) = x;
 				P[i].x(j, 1) = sigma0(j);
 			}
-			P[i].fit_fun(ff);
+			P[i].fit_fun(ff, ud1, ud2);
 			if (P[i].y < epsilon) {
 				return P[i];
 			}
@@ -731,34 +738,24 @@ solution EA(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, in
 		while (true) {
 
 			//Losowanie lambda
-			double *mi_ff = new double[mi];
-			int *mi_ff_index = new int[mi];
-			long mianownik = 1;
-			for (int i = 0; i < mi; i++) {
-				mianownik *= (i + 1);
-				mi_ff[i] = P[i].y(0);
-				mi_ff_index[i] = i;
+			s_IFF = 0;
+			for (int i = 0; i < mi ; ++i)
+			{
+				IFF(i) = 1 / P[i].y(0);
+				s_IFF += IFF(i);
 			}
 
-			long licznik = 0;
-			for (int i = 0; i < mi; i++) {
-				licznik += (1. / (i + 1.)) * mianownik;
-			}
-
-			bubbleSort(mi_ff, mi_ff_index, mi);
-
-
-			for (int i = 0; i < lambda; i++) {
-				long random = (long)((double)licznik * R() / R.max() + 1.0);
-				long position = 0;
-				for (int j = 0; j < mi; j++) {
-					position += (1. / (j + 1.)) * mianownik;
-					if (random <= position) {
-						if (mi_ff_index[j] != -1) {
-							P[mi + i].x = P[mi_ff_index[j]].x;
-							mi_ff_index[j] = -1;
-							break;
-						}
+			for (int i = 0; i < lambda ; ++i)
+			{
+				r = 1.0 * s_IFF * (R() / R.max());
+				s = 0;
+				for (int j = 0; j < mi ; ++j)
+				{
+					s += IFF(i);
+					if (r < s)
+					{
+						P[mi + i] = P[j];
+						break;
 					}
 				}
 			}
@@ -787,7 +784,7 @@ solution EA(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, in
 
 			//Czy mniejsze od < epsilon
 			for (int i = 0; i < lambda; i++) {
-				P[mi + i].fit_fun(ff);
+				P[mi + i].fit_fun(ff, ud1, ud2);
 				if (P[mi + i].y < epsilon) {
 					return P[mi + i];
 				}
