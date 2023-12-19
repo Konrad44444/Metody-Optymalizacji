@@ -761,21 +761,23 @@ solution EA(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, in
 			}
 
 			//Mutacja
-			double alfa = 1/(pow(2*N,(1./2.)));
-			double beta = 1/(pow(4*N,(1./4.)));
+			double alfa = 1.0/(pow(2*N,0.5));
+			double beta = 1.0/(pow(4*N,0.25));
 			for (int i = 0; i < lambda; i++) {
+				double a = m2d(randn_mat());
+				
 				for (int j = 0; j < N; j++) {
-					double a = randn_mat()(0);
-					double b = randn_mat()(0);
+					double _a = m2d(randn_mat());
+					double b = m2d(randn_mat());
 					P[mi + i].x(j, 1) *= exp(alfa*a+beta*b);
-					P[mi + i].x(j, 0) += a* P[mi + i].x(j, 1);
+					P[mi + i].x(j, 0) += _a* P[mi + i].x(j, 1);
 				}
 			}
 
 			//Zamiana
 			for (int i = 0; i < lambda-1; i += 2)
 			{
-				double w = 1.0 * R() / R.max();
+				double w = m2d(randn_mat());
 				solution temp;
 				temp.x = P[mi + i].x;
 				P[mi + i].x = w * P[mi + i].x + (1.-w) * P[mi + i + 1].x;

@@ -432,11 +432,11 @@ void lab5() {
 	int mi = 40;
 	int lamba = 20;
 	int N = 2;
-	matrix sigma0(2, new double[2] { 0.01, 0.01 });
+	matrix sigma0(2, new double[2] { 1.0, 1.0 });
 	matrix lb = -5.0;
 	matrix ub = 5.0;
-	double epsilon = 1e-4;
-	int Nmax = 100000;
+	double epsilon = 1e-2;
+	int Nmax = 10000;
 
 	solution result = EA(f5, N, lb, ub, mi, lamba, sigma0, epsilon, Nmax, NAN, NAN);
 	std::cout << result;
