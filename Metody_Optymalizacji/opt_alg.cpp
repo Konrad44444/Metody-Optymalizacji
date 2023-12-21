@@ -718,7 +718,7 @@ solution EA(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, in
 		double uBand = m2d(ub - lb);
 		double lBand = m2d(lb);
 
-		std::cout << uBand << "\t" << lBand << "\n";
+		//std::cout << lBand << "\t" << uBand << "\n";
 		
 		//Losowanie mi oraz sprawdzenie czy < epsilon
 		for (int i = 0; i < mi; i++) {

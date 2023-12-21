@@ -301,21 +301,31 @@ matrix f5(matrix x, matrix ud1, matrix ud2)
 	return y;
 }
 
-void bubbleSort(double y[], int index[], int n)
-{
-	int i, j;
-	bool swapped;
-	for (i = 0; i < n - 1; i++) {
-		swapped = false;
-		for (j = 0; j < n - i - 1; j++) {
-			if (y[j] > y[j + 1]) {
-				swap(y[j], y[j + 1]);
-				swap(index[j], index[j + 1]);
-				swapped = true;
-			}
-		}
+matrix df5(double d, matrix Y, matrix b, matrix ud2) {
+	double m1 = 5, m2 = 5, k1 = 1, k2 = 1, F = 1, b1 = b(0), b2 = b(1);
 
-		if (swapped == false)
-			break;
+	matrix dY(4, 1);
+	dY(0) = Y(1);
+	dY(1) = (-b1 * Y(1) - b2 * (Y(1) - Y(3)) - k1 * Y(0) - k2 * (Y(0) - Y(2))) / m1;
+	dY(2) = Y(3);
+	dY(3) = (F + b2 * (Y(1) - Y(3)) + k2 * (Y(0) - Y(2))) / m2;
+	return dY;
+}
+
+matrix ff5R(matrix b, matrix X, matrix ud2){
+
+	double t0 = 0, dt = 0.1, t_end = 100;
+	int* N = get_size(X);
+
+	matrix y;
+	matrix Y0(4, 1);
+	matrix* Y = solve_ode(df5, t0, dt, t_end, Y0, b);
+
+	y(0) = 0;
+	for (int i = 0; i < N[0]; i++){
+		y = y + abs(X(i, 0) - Y[1](i, 0)) + abs(X(i, 1) - Y[1](i, 2));
 	}
+	y(0) = y(0) / (2 * N[0]);
+
+	return y;
 }

@@ -430,16 +430,30 @@ void lab4() {
 void lab5() {
 
 	int mi = 40;
-	int lamba = 20;
+	int lambda = 20;
 	int N = 2;
-	matrix sigma0(2, new double[2] { 1.0, 1.0 });
-	matrix lb = -5.0;
-	matrix ub = 5.0;
 	double epsilon = 1e-2;
 	int Nmax = 10000;
 
-	solution result = EA(f5, N, lb, ub, mi, lamba, sigma0, epsilon, Nmax, NAN, NAN);
-	std::cout << result;
+	//matrix sigma0(2, new double[2] { 1.0, 1.0 });
+	//matrix lb = -5.0;
+	//matrix ub = 5.0;
+	//solution result = EA(f5, N, lb, ub, mi, lambda, sigma0, epsilon, Nmax, NAN, NAN);
+	//std::cout << result;
+
+	matrix lb_r = 0.1;
+	matrix ub_r = 3.0;
+	matrix sigma(2, new double[2] { 1.0, 1.0 });
+	matrix X(1001,2);
+
+	fstream Dane("Dane.txt");
+	Dane >> X;
+	Dane.close();
+	//cout << X;
+
+	solution::clear_calls();
+	solution result_r = EA(ff5R, N, lb_r, ub_r, mi, lambda, sigma, epsilon, Nmax, X, NAN);
+	cout << result_r;
 
 }
 

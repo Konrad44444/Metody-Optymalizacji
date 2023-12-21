@@ -22,4 +22,5 @@ matrix ff4R(matrix teta, matrix x, matrix y);
 matrix ff4R_grad(matrix teta, matrix x, matrix y);
 double h0(matrix teta, matrix x);
 matrix f5(matrix x, matrix ud1 = NAN, matrix ud2 = NAN);
-void bubbleSort(double y[], int index[], int n);
+matrix df5(double d, matrix Y, matrix b, matrix ud2);
+matrix ff5R(matrix b, matrix X, matrix ud2);
