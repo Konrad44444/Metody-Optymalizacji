@@ -301,25 +301,6 @@ matrix f5(matrix x, matrix ud1, matrix ud2)
 	return y;
 }
 
-void bubbleSort(double y[], int index[], int n)
-{
-	int i, j;
-	bool swapped;
-	for (i = 0; i < n - 1; i++) {
-		swapped = false;
-		for (j = 0; j < n - i - 1; j++) {
-			if (y[j] > y[j + 1]) {
-				swap(y[j], y[j + 1]);
-				swap(index[j], index[j + 1]);
-				swapped = true;
-			}
-		}
-
-		if (swapped == false)
-			break;
-	}
-}
-
 matrix df5(double d, matrix Y, matrix b, matrix ud2) {
 	double m1 = 5, m2 = 5, k1 = 1, k2 = 1, F = 1, b1 = b(0), b2 = b(1);
 

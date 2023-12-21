@@ -443,7 +443,7 @@ void lab5() {
 
 	matrix lb_r = 0.1;
 	matrix ub_r = 3.0;
-	matrix sigma(2, new double[2] { 50.0, 50.0 });
+	matrix sigma(2, new double[2] { 1.0, 1.0 });
 	matrix X(1001,2);
 
 	fstream Dane("Dane.txt");
@@ -451,6 +451,7 @@ void lab5() {
 	Dane.close();
 	//cout << X;
 
+	solution::clear_calls();
 	solution result_r = EA(ff5R, N, lb_r, ub_r, mi, lambda, sigma, epsilon, Nmax, X, NAN);
 	cout << result_r;
 
