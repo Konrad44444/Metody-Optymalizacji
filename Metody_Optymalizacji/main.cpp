@@ -435,11 +435,29 @@ void lab5() {
 	double epsilon = 1e-2;
 	int Nmax = 10000;
 
-	//matrix sigma0(2, new double[2] { 1.0, 1.0 });
-	//matrix lb = -5.0;
-	//matrix ub = 5.0;
-	//solution result = EA(f5, N, lb, ub, mi, lambda, sigma0, epsilon, Nmax, NAN, NAN);
-	//std::cout << result;
+	/*
+	matrix* sigma0 = new matrix[5] {
+		matrix(2, new double[2] { 0.01, 0.01 }),
+		matrix(2, new double[2] { 0.1, 0.1 }),
+		matrix(2, new double[2] { 1.0, 1.0 }),
+		matrix(2, new double[2] { 10.0, 10.0 }),
+		matrix(2, new double[2] { 100.0, 100.0 })
+	};
+	matrix lb = -5.0;
+	matrix ub = 5.0;
+
+
+	for (int j = 0; j < 100; j++) {
+		solution::clear_calls();
+		solution result = EA(f5, N, lb, ub, mi, lambda, sigma0[4], epsilon, Nmax, NAN, NAN);
+
+		file << result.x(0, 0) << ";" << result.x(1, 0) << ";" << result.y(0) << ";" << result.f_calls << ";" << (abs(result.y(0)) < 0.5) ? "tak" : "nie";
+		file << "\n";
+	}
+
+
+	delete[] sigma0;
+	*/
 
 	matrix lb_r = 0.1;
 	matrix ub_r = 3.0;
