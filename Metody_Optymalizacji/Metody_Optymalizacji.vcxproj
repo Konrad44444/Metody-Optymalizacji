@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Dane.txt" />
+    <Text Include="ea_sim.txt" />
     <Text Include="hj.txt" />
     <Text Include="HJ_sim.txt" />
     <Text Include="rosen.txt" />

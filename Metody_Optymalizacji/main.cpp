@@ -469,9 +469,24 @@ void lab5() {
 	Dane.close();
 	//cout << X;
 
-	solution::clear_calls();
-	solution result_r = EA(ff5R, N, lb_r, ub_r, mi, lambda, sigma, epsilon, Nmax, X, NAN);
-	cout << result_r;
+	//solution::clear_calls();
+	//solution result_r = EA(ff5R, N, lb_r, ub_r, mi, lambda, sigma, epsilon, Nmax, X, NAN);
+	//cout << result_r;
+
+	double t0 = 0, dt = 0.1, t_end = 100;
+	matrix Y0(4, 1);
+	matrix b(2, new double[2] { 1.38123, 1.63727 });
+	matrix* Y = solve_ode(df5, t0, dt, t_end, Y0, b);
+
+	fstream plik("ea_sim.txt");
+
+	if (plik.good()) {
+
+		plik << Y[1];
+
+	}
+
+	plik.close();
 
 }
 
